@@ -10,7 +10,9 @@ confinement: strict # use 'strict' once you have the right plugs and slots
 base: core18 # Melodic
 
 architectures:
-  - build-on: [amd64, arm64, armhf]
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: armhf
 
 parts:
   workspace:
