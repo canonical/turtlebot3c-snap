@@ -30,8 +30,12 @@ It starts the motor controller, advertises the sensors, upload the robot model t
 At boot, the robot is simply ready to be used.
 
 ### teleop
+The `teleop` app is a daemon that is automatically started when the robot is turned on.
+It allows for controlling the robot from multiple sources such as the keyboard (e.g. [key_teleop](http://wiki.ros.org/key_teleop)),
+a remote controller (e.g. [joy_teleop](http://wiki.ros.org/joy_teleop)) or leave it to the navigation stack.
+The input to use is managed by the [mux](http://wiki.ros.org/topic_tools/mux) node. It can be changed through a rosservice call such as,
 ```terminal
-turtlebot3c.teleop
+rosservice call /mux/select "topic: 'joy_vel'"
 ```
 
 ### joy
