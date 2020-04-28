@@ -33,9 +33,16 @@ apps:
     plugs: [network, network-bind, raw-usb]
 
   teleop:
+    daemon: simple
     environment:
       TURTLEBOT3_MODEL: waffle_pi
     command: roslaunch turtlebot3c_teleop turtlebot3c_teleop.launch
+    plugs: [network, network-bind]
+
+  joy:
+    environment:
+      TURTLEBOT3_MODEL: waffle_pi
+    command: roslaunch turtlebot3c_teleop joy.launch
     plugs: [network, network-bind, joystick]
 
   mapping:
