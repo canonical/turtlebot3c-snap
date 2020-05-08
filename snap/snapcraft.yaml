@@ -5,8 +5,8 @@ description: |
   This snap automatically spawn a roscore and the core components for the
   Turtlebot3.
 
-grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: strict # use 'strict' once you have the right plugs and slots
+grade: stable
+confinement: strict
 base: core18 # Melodic
 
 architectures:
