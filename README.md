@@ -4,7 +4,7 @@
 
 `turtlebot3c` packaged as a snap.  
 `turtlebot3c` is a collection of `launchfiles` and configuration files to ease working with the Turtlebot3.
-The snap is meant to be run on the robot, allowing one to quickly get up and running with a self contained Turtlebot3.
+The snap is meant to be run with the simulation, allowing one to quickly get an up and running Turtlebot3 application.
 
 - See the [Turtlebot3 website](http://emanual.robotis.com/docs/en/platform/turtlebot3/overview/).
 - See the [turtlebot3c repo](https://github.com/canonical/turtlebot3c).
@@ -12,7 +12,12 @@ The snap is meant to be run on the robot, allowing one to quickly get up and run
 ## How to install
 
 ```terminal
-sudo snap install turtlebot3c
+sudo snap install turtlebot3c --channel=noetic-gazebo/lasest
+```
+
+## Start the simulation
+```bash
+TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch
 ```
 
 ## How to use
@@ -20,13 +25,13 @@ sudo snap install turtlebot3c
 The snap is composed of 5 applications:
 - core
 - teleop
-- joy
+- key
 - mapping
 - navigation
 
 ### core
 The `core` app is a daemon that is automatically started when the robot is turned on.
-It starts the motor controller, advertises the sensors, upload the robot model to the rosparam server and publishes the robot tf tree.
+It starts the `robot_state_publisher` only since the robot is meant to be spawned by the simulation
 At boot, the robot is simply ready to be used.
 
 ### teleop
