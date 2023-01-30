@@ -25,11 +25,16 @@ parts:
     override-pull: |
       snapcraftctl pull # Here we are going to use the local .rosinstall file
       vcs import --input turtlebot3c.rosinstall
-    #stage-packages: [libslang2, freeglut3]
-    #build-packages: [distro-info-data] # distro-info-data is necessary on some remote e.g. CI
+
+  # copy local scripts to the snap usr/bin
+  local-files:
+    plugin: dump
+    source: snap/local/
+    organize:
+      '*.sh': usr/bin/
+
 
 apps:
-
   core:
     daemon: simple
     environment:
@@ -52,6 +57,7 @@ apps:
     environment:
       TURTLEBOT3_MODEL: waffle_pi
       ROS_HOME: $SNAP_USER_DATA/ros
+    command-chain: [usr/bin/mux_select_key_vel.sh]
     command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop key.launch
     plugs: [network, network-bind, joystick]
     extensions: [ros1-noetic]
@@ -60,7 +66,12 @@ apps:
     environment:
       TURTLEBOT3_MODEL: waffle_pi
       ROS_HOME: $SNAP_USER_DATA/ros
-    command: opt/ros/noetic/bin/rosrun turtlebot3c_2dnav mapping_manager
+    command-chain: [usr/bin/mux_select_key_vel.sh]
+    command: opt/ros/noetic/bin/roslaunch turtlebot3c_2dnav turtlebot3c_mapping.launch
+    daemon: simple
+    install-mode: disable
+    stop-command: usr/bin/save_map.sh
+    post-stop-command: usr/bin/install_last_map.sh
     plugs: [network, network-bind]
     extensions: [ros1-noetic]
 
@@ -70,6 +81,10 @@ apps:
       ROS_HOME: $SNAP_USER_DATA/ros
       # map server need pulseaudio
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio"
-    command: opt/ros/noetic/bin/roslaunch turtlebot3c_2dnav turtlebot3c_navigation.launch
+    command-chain: [usr/bin/mux_select_nav_vel.sh]
+    command: usr/bin/navigation_launcher.sh
+    daemon: simple
+    install-mode: disable
+    post-stop-command: usr/bin/mux_select_key_vel.sh
     plugs: [network, network-bind]
     extensions: [ros1-noetic]
