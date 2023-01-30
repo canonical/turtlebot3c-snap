@@ -1,3 +1,3 @@
-- git: {local-name: turtlebot3, uri: 'https://github.com/ROBOTIS-GIT/turtlebot3.git', version: melodic-devel}
-- git: {local-name: turtlebot3_msgs, uri: 'https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git', version: melodic-devel}
-- git: {local-name: turtlebot3c, uri: 'https://github.com/ubuntu-robotics/turtlebot3c.git', version: master}
+- git: {local-name: turtlebot3, uri: 'https://github.com/ROBOTIS-GIT/turtlebot3.git', version: noetic-devel}
+- git: {local-name: turtlebot3_msgs, uri: 'https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git', version: noetic-devel}
+- git: {local-name: turtlebot3c, uri: 'https://github.com/ubuntu-robotics/turtlebot3c.git', version: noetic-gazebo-classic}

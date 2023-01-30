@@ -7,21 +7,25 @@ description: |
 
 grade: stable
 confinement: strict
-base: core18 # Melodic
+base: core20 # Noetic
 
 architectures:
   - build-on: amd64
   - build-on: arm64
-  - build-on: armhf
 
 parts:
   workspace:
     plugin: catkin
-    include-roscore: true
     source: .
-    rosinstall-files: ['turtlebot3c.rosinstall']
-    stage-packages: [libslang2, freeglut3]
-    build-packages: [distro-info-data] # distro-info-data is necessary on some remote e.g. CI
+    build-packages: [git, python3-vcstool]
+    stage-packages:
+      - ros-noetic-rosbash # necessary if we need rosrun
+      - ros-noetic-roslaunch # necessary if we need roslaunch
+    override-pull: |
+      snapcraftctl pull # Here we are going to use the local .rosinstall file
+      vcs import --input turtlebot3c.rosinstall
+    #stage-packages: [libslang2, freeglut3]
+    #build-packages: [distro-info-data] # distro-info-data is necessary on some remote e.g. CI
 
 apps:
 
@@ -29,30 +33,42 @@ apps:
     daemon: simple
     environment:
       TURTLEBOT3_MODEL: waffle_pi
-    command: roslaunch turtlebot3c_bringup turtlebot3c_bringup.launch
-    plugs: [network, network-bind, raw-usb]
+      ROS_HOME: $SNAP_USER_DATA/ros
+    command: opt/ros/noetic/bin/roslaunch turtlebot3c_bringup turtlebot3c_bringup.launch
+    plugs: [network, network-bind]
+    extensions: [ros1-noetic]
 
   teleop:
     daemon: simple
     environment:
       TURTLEBOT3_MODEL: waffle_pi
-    command: roslaunch turtlebot3c_teleop turtlebot3c_teleop.launch
+      ROS_HOME: $SNAP_USER_DATA/ros
+    command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop turtlebot3c_teleop.launch
     plugs: [network, network-bind]
+    extensions: [ros1-noetic]
 
-  joy:
+  key:
     environment:
       TURTLEBOT3_MODEL: waffle_pi
-    command: roslaunch turtlebot3c_teleop joy.launch
+      ROS_HOME: $SNAP_USER_DATA/ros
+    command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop key.launch
     plugs: [network, network-bind, joystick]
+    extensions: [ros1-noetic]
 
   mapping:
-   environment:
-     TURTLEBOT3_MODEL: waffle_pi
-   command: rosrun turtlebot3c_2dnav mapping_manager
-   plugs: [network, network-bind]
+    environment:
+      TURTLEBOT3_MODEL: waffle_pi
+      ROS_HOME: $SNAP_USER_DATA/ros
+    command: opt/ros/noetic/bin/rosrun turtlebot3c_2dnav mapping_manager
+    plugs: [network, network-bind]
+    extensions: [ros1-noetic]
 
   navigation:
-   environment:
-     TURTLEBOT3_MODEL: waffle_pi
-   command: roslaunch turtlebot3c_2dnav turtlebot3c_navigation.launch
-   plugs: [network, network-bind]
+    environment:
+      TURTLEBOT3_MODEL: waffle_pi
+      ROS_HOME: $SNAP_USER_DATA/ros
+      # map server need pulseaudio
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio"
+    command: opt/ros/noetic/bin/roslaunch turtlebot3c_2dnav turtlebot3c_navigation.launch
+    plugs: [network, network-bind]
+    extensions: [ros1-noetic]
