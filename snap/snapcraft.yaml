@@ -1,5 +1,6 @@
 name: turtlebot3c
-version: '0.1'
+version: git
+license: GPL-3.0
 summary: Turtlebot3c core snap
 description: |
   This snap automatically spawn a roscore and the core components for the
