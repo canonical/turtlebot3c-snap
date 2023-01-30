@@ -43,14 +43,15 @@ The input to use is managed by the [mux](http://wiki.ros.org/topic_tools/mux) no
 rosservice call /mux/select "topic: 'joy_vel'"
 ```
 
-### joy
-The `joy` app allows for connecting a (third party) remote controller directly to the robot in order to drive it.
+### key
+The `key` app allows the keyboard to control the robot.
 See also the `teleop` application for further details.
 
 To start the app, simply type the following command,
 ```terminal
-turtlebot3c.joy
+turtlebot3c.key
 ```
+This command automatically select 'key_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node.
 
 ### mapping
 The `mapping` app allows the robot to build a representation of its environment as a map usable by the navigation stack.
@@ -62,9 +63,11 @@ Drive your robot around in order to map your environment.
 Notice that you can monitor the process through Rviz.
 Once the entire environment covered, stop the mapping by pressing `ctrl+c`.
 This will stop the process and automatically save the map as
-`$SNAP_USER_DATA/.tb3c/maps/<date_and_time>/map.yaml`.
+`$SNAP_USER_COMMON/${DATE}.yaml`.
 Furthermore, a softlink to the newly created map is created at
-`$SNAP_USER_DATA/.tb3c/maps/config`. The `navigation` stack will automatically use the softlinked map.
+`$SNAP_USER_COMMON/current_map.yaml`. The `navigation` stack will automatically use the softlinked map.
+This command automatically select 'key_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node.
+
 
 ### navigation
 The `navigation` app encompasses the whole autonomous navigation stack.
@@ -74,4 +77,5 @@ To start the navigation app, simply type the following command:
 turtlebot3c.navigation
 ```
 It will start the whole navigation stack and use the last map built with the
-`mapping` app found at `$SNAP_USER_DATA/.tb3c/maps/config`.
+`mapping` app found at `$SNAP_USER_COMMON/`.
+This command automatically select 'nav_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node and switch back to 'key_vel' on exit.
