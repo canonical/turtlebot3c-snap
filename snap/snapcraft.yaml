@@ -6,6 +6,18 @@ description: |
   This snap automatically spawn a roscore and the core components for the
   Turtlebot3.
 
+  This snap is meant to run on the Turtlebot 3 robot or with the simulation
+
+  By default the snap runs on the robot.
+  To switch to the simulation
+
+    snap set turtlebot3c simulation=true
+
+  By default the snap used the lidar LDS-01 robot.
+  To select the other lidar for the robot
+
+    snap set turtlebot3c lsd-model=LDS-02
+
 grade: stable
 confinement: strict
 base: core20 # Noetic
@@ -40,8 +52,8 @@ apps:
     environment:
       TURTLEBOT3_MODEL: waffle_pi
       ROS_HOME: $SNAP_USER_DATA/ros
-    command: opt/ros/noetic/bin/roslaunch turtlebot3c_bringup turtlebot3c_bringup.launch
-    plugs: [network, network-bind]
+    command: usr/bin/core_launcher.sh
+    plugs: [network, network-bind, raw-usb]
     extensions: [ros1-noetic]
 
   teleop:
