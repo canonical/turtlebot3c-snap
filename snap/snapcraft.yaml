@@ -59,6 +59,15 @@ apps:
       ROS_HOME: $SNAP_USER_DATA/ros
     command-chain: [usr/bin/mux_select_key_vel.sh]
     command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop key.launch
+    plugs: [network, network-bind]
+    extensions: [ros1-noetic]
+
+  joy:
+    environment:
+      TURTLEBOT3_MODEL: waffle_pi
+      ROS_HOME: $SNAP_USER_DATA/ros
+    command-chain: [usr/bin/mux_select_joy_vel.sh]
+    command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop joy.launch
     plugs: [network, network-bind, joystick]
     extensions: [ros1-noetic]
 
@@ -85,6 +94,5 @@ apps:
     command: usr/bin/navigation_launcher.sh
     daemon: simple
     install-mode: disable
-    post-stop-command: usr/bin/mux_select_key_vel.sh
     plugs: [network, network-bind]
     extensions: [ros1-noetic]

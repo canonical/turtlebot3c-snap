@@ -53,6 +53,16 @@ turtlebot3c.key
 ```
 This command automatically select 'key_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node.
 
+### joy
+The `joy` app allows the joystick to control the robot.
+See also the `teleop` application for further details.
+
+To start the app, simply type the following command,
+```terminal
+turtlebot3c.joy
+```
+This command automatically select 'joy_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node.
+
 ### mapping
 The `mapping` app allows the robot to build a representation of its environment as a map usable by the navigation stack.
 To launch the mapping, simply type the following command:
