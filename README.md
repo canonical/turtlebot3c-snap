@@ -63,9 +63,9 @@ Drive your robot around in order to map your environment.
 Notice that you can monitor the process through Rviz.
 Once the entire environment covered, stop the mapping by pressing `ctrl+c`.
 This will stop the process and automatically save the map as
-`$SNAP_USER_COMMON/${DATE}.yaml`.
+`$SNAP_USER_COMMON/map/${DATE}.yaml`.
 Furthermore, a softlink to the newly created map is created at
-`$SNAP_USER_COMMON/current_map.yaml`. The `navigation` stack will automatically use the softlinked map.
+`$SNAP_USER_COMMON/map/current_map.yaml`. The `navigation` stack will automatically use the softlinked map.
 This command automatically select 'key_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node.
 
 
@@ -77,5 +77,5 @@ To start the navigation app, simply type the following command:
 turtlebot3c.navigation
 ```
 It will start the whole navigation stack and use the last map built with the
-`mapping` app found at `$SNAP_USER_COMMON/`.
+`mapping` app found at `$SNAP_USER_COMMON/map`.
 This command automatically select 'nav_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node and switch back to 'key_vel' on exit.
