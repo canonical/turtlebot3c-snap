@@ -16,7 +16,7 @@ description: |
   By default the snap used the lidar LDS-01 robot.
   To select the other lidar for the robot
 
-    snap set turtlebot3c lsd-model=LDS-02
+    snap set turtlebot3c lds-model=LDS-02
 
 grade: stable
 confinement: strict
