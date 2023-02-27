@@ -24,5 +24,19 @@ case "$LDS_MODEL" in
 		;;
 esac
 
-# restart core on new config
+TURTLEBOT3_MODEL="$(snapctl get turtlebot3-model)"
+case "$TURTLEBOT3_MODEL" in
+	"burger") ;;
+	"waffle") ;;
+	"waffle_pi") ;;
+	*)
+		>&2 echo "'$TURTLEBOT3_MODEL' is not a supported value for turtlebot3-model." \
+      "Possible values are burger, waffle and waffle_pi"
+		return 1
+		;;
+esac
+
+# restart core and teleop on new config
 snapctl restart "$SNAP_INSTANCE_NAME.core"
+snapctl restart "$SNAP_INSTANCE_NAME.teleop"
+

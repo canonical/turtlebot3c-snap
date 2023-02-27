@@ -5,3 +5,7 @@ snapctl set simulation=false
 
 # set default lidar model for real robot
 snapctl set lds-model=LDS-01
+
+# set default turtlebot 3 model
+snapctl set turtlebot3-model=waffle_pi
+

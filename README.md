@@ -14,10 +14,20 @@ The snap is meant to be run with the real robot as well as the simulation, allow
 ```terminal
 sudo snap install turtlebot3c --channel=noetic/latest
 ```
+
 ## Real robot setup
-In case your turtlebot doesn't use the default `LDS-01` lidar model change it with the help of
+In case your Turtlebot doesn't use the default `LDS-01` lidar model change it with the help of
 ```
 sudo snap set turtlebot3c lsd-model=LDS-02
+```
+
+## Robot model setup
+By default the snap is using the Turtlebot3 model `waffle_pi`.
+You can select another model (for the simulation or the real robot).
+The available models are: `waffle_pi`, `waffle` and `burger`.
+The model can change with the help of:
+```
+sudo snap set turtlebot3c turtlebot3-model=waffle_pi
 ```
 
 ## Simulation setup
