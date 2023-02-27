@@ -42,7 +42,7 @@ TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch
 
 ## How to use
 
-The snap is composed of 5 applications:
+The snap is composed of 6 applications:
 - core
 - teleop
 - key
