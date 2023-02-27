@@ -12,7 +12,7 @@ The snap is meant to be run with the real robot as well as the simulation, allow
 ## How to install
 
 ```terminal
-sudo snap install turtlebot3c --channel=noetic/lasest
+sudo snap install turtlebot3c --channel=noetic/latest
 ```
 ## Real robot setup
 In case your turtlebot doesn't use the default `LDS-01` lidar model change it with the help of
@@ -42,7 +42,8 @@ The snap is composed of 5 applications:
 
 ### core
 The `core` app is a daemon that is automatically started when the robot is turned on.
-It starts the `robot_state_publisher` only since the robot is meant to be spawned by the simulation
+It starts the motor controller, advertises the sensors, upload the robot model to the rosparam server and publishes the robot tf tree.
+In case the simulation is used, it only starts the `robot_state_publisher` since the robot is meant to be spawned by the simulation.
 At boot, the robot is simply ready to be used.
 
 ### teleop
@@ -92,6 +93,7 @@ Furthermore, a softlink to the newly created map is created at
 `$SNAP_USER_COMMON/map/current_map.yaml`. The `navigation` stack will automatically use the softlinked map.
 This command automatically select 'key_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node.
 
+Note that the default `USER` of snap daemons is `root`. Hence, the `$SNAP_USER_COMMON` variable will point to `/root/snap/turtlebot3c/common`.
 
 ### navigation
 The `navigation` app is also a daemon that encompasses the whole autonomous navigation stack.
