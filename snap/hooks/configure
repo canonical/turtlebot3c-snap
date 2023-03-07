@@ -37,6 +37,8 @@ case "$TURTLEBOT3_MODEL" in
 esac
 
 # restart core and teleop on new config
-snapctl restart "$SNAP_INSTANCE_NAME.core"
-snapctl restart "$SNAP_INSTANCE_NAME.teleop"
+snapctl stop "$SNAP_INSTANCE_NAME.core"
+snapctl stop "$SNAP_INSTANCE_NAME.teleop"
 
+snapctl start "$SNAP_INSTANCE_NAME.core"
+snapctl start "$SNAP_INSTANCE_NAME.teleop"
