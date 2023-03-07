@@ -54,31 +54,23 @@ parts:
 apps:
   core:
     daemon: simple
-    environment:
-      ROS_HOME: $SNAP_USER_DATA/ros
     command: usr/bin/core_launcher.sh
     plugs: [network, network-bind, raw-usb]
     extensions: [ros1-noetic]
 
   teleop:
     daemon: simple
-    environment:
-      ROS_HOME: $SNAP_USER_DATA/ros
     command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop turtlebot3c_teleop.launch
     plugs: [network, network-bind]
     extensions: [ros1-noetic]
 
   key:
-    environment:
-      ROS_HOME: $SNAP_USER_DATA/ros
     command-chain: [usr/bin/mux_select_key_vel.sh]
     command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop key.launch
     plugs: [network, network-bind]
     extensions: [ros1-noetic]
 
   joy:
-    environment:
-      ROS_HOME: $SNAP_USER_DATA/ros
     command-chain: [usr/bin/mux_select_joy_vel.sh]
     command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop joy.launch
     plugs: [network, network-bind, joystick]
