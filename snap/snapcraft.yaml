@@ -56,6 +56,7 @@ apps:
     daemon: simple
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/blas:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lapack"
     command: usr/bin/core_launcher.sh
     plugs: [network, network-bind, raw-usb]
     extensions: [ros1-noetic]
