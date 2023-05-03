@@ -28,6 +28,6 @@ jobs:
         architecture: ${{ matrix.platform }}
     - uses: actions/upload-artifact@v3
       with:
-        name: turtlebot3c
+        name: tb3_snap_upload
         path: ./*.snap
 
