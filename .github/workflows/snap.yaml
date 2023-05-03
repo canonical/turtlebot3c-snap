@@ -23,6 +23,8 @@ jobs:
       snap-file: ${{ steps.build-snap.outputs.snap }}
     steps:
     - uses: actions/checkout@v3
+    - run: |
+        git config --global --add safe.directory /data
     - uses: docker/setup-qemu-action@v1
     - uses: diddlesnaps/snapcraft-multiarch-action@v1
       with:
