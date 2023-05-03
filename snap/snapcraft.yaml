@@ -57,6 +57,7 @@ apps:
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/blas:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lapack"
+    command-chain: [usr/bin/ros_network.sh]
     command: usr/bin/core_launcher.sh
     plugs: [network, network-bind, raw-usb]
     extensions: [ros1-noetic]
@@ -65,6 +66,7 @@ apps:
     daemon: simple
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
+    command-chain: [usr/bin/ros_network.sh]
     command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop turtlebot3c_teleop.launch
     plugs: [network, network-bind]
     extensions: [ros1-noetic]
@@ -72,7 +74,7 @@ apps:
   key:
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
-    command-chain: [usr/bin/mux_select_key_vel.sh]
+    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_key_vel.sh]
     command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop key.launch
     plugs: [network, network-bind]
     extensions: [ros1-noetic]
@@ -80,7 +82,7 @@ apps:
   joy:
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
-    command-chain: [usr/bin/mux_select_joy_vel.sh]
+    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_joy_vel.sh]
     command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop joy.launch
     plugs: [network, network-bind, joystick]
     extensions: [ros1-noetic]
@@ -88,7 +90,7 @@ apps:
   mapping:
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
-    command-chain: [usr/bin/mux_select_key_vel.sh]
+    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_key_vel.sh]
     command: usr/bin/mapping_launcher.sh
     daemon: simple
     install-mode: disable
@@ -102,7 +104,7 @@ apps:
       ROS_HOME: $SNAP_USER_DATA/ros
       # map server need pulseaudio
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
-    command-chain: [usr/bin/mux_select_nav_vel.sh]
+    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_nav_vel.sh]
     command: usr/bin/navigation_launcher.sh
     daemon: simple
     install-mode: disable
