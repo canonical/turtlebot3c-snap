@@ -5,6 +5,7 @@ on:
       - '*'
     branches:
       - main
+      - fix/tb3_prague
   pull_request:
     branches:
       - main
