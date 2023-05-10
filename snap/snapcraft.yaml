@@ -101,8 +101,8 @@ apps:
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
       # map server need pulseaudio
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio"
     command-chain: [usr/bin/mux_select_nav_vel.sh]
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
     command: usr/bin/navigation_launcher.sh
     daemon: simple
     install-mode: disable
