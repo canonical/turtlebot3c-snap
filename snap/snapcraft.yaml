@@ -108,3 +108,8 @@ apps:
     plugs: [network, network-bind]
     extensions: [ros1-noetic]
 
+  map-cleaner:
+    command: usr/bin/map_cleaner.sh
+    daemon: simple
+    timer: "04:00" # runs every day at 4 am
+
