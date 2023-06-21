@@ -1,0 +1,75 @@
+name: turtlebot3c-nav
+version: '0.1'
+license: GPL-3.0
+summary: Turtlebot3c mapping and navigation snap
+description: |
+  This snap automatically spawn a roscore and the core components for the
+  Turtlebot3.
+
+  This snap is meant to run on the Turtlebot3 robot or with the simulation
+
+  By default the snap runs on the robot.
+  To switch to the simulation
+
+    snap set turtlebot3c simulation=true
+
+  By default the snap used the lidar LDS-01 robot.
+  To select the other lidar for the robot
+
+    snap set turtlebot3c lds-model=LDS-02
+
+  By default the snap runs the waffle_pi Turtlebot3 model.
+  To select another robot model (waffle or burger)
+
+    snap set turtlebot3c turtlebot3-model=burger
+
+grade: stable
+confinement: strict
+base: core20 # Noetic
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: armhf
+
+parts:
+  workspace:
+    plugin: catkin
+    source: https://github.com/ubuntu-robotics/turtlebot3c.git
+    source-branch: artivis-patch-1
+    source-subdir: turtlebot3c_2dnav
+
+  # copy local scripts to the snap usr/bin
+  local-files:
+    no_extension: True
+    plugin: dump
+    source: snap/local/
+    organize:
+      '*.sh': usr/bin/
+
+apps:
+  mapping:
+    environment:
+      ROS_HOME: $SNAP_USER_DATA/ros
+    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_key_vel.sh]
+    command: usr/bin/mapping_launcher.sh
+    daemon: simple
+    install-mode: disable
+    stop-command: usr/bin/save_map.sh
+    post-stop-command: usr/bin/install_last_map.sh
+    plugs: [network, network-bind]
+    extensions: [ros1-noetic-robot]
+
+  navigation:
+    environment:
+      ROS_HOME: $SNAP_USER_DATA/ros
+      # map server need pulseaudio
+      # Defining this var here overwrite the extension definition,
+      # thus we need to respecify the extension paths
+      LD_LIBRARY_PATH: "$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$LD_LIBRARY_PATH"
+    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_nav_vel.sh]
+    command: usr/bin/navigation_launcher.sh
+    daemon: simple
+    install-mode: disable
+    plugs: [network, network-bind]
+    extensions: [ros1-noetic-robot]

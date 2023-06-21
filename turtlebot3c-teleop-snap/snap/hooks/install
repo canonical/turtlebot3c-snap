@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+# set default turtlebot 3 model
+snapctl set turtlebot3-model=waffle_pi
+
+# set default ROS master hostname
+snapctl set ros-master-host=$(hostname).local
