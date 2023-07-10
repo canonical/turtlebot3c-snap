@@ -48,7 +48,7 @@ See also the `teleop` application for further details.
 To start the app, simply type the following command,
 
 ```terminal
-turtlebot3c.key
+turtlebot3c-teleop.key
 ```
 
 This command automatically select 'key_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node.
