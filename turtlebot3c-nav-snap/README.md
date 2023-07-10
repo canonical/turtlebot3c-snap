@@ -75,5 +75,5 @@ This command automatically select 'nav_vel' as the input for the [mux](http://wi
 You can stop it by typing:
 
 ```terminal
-sudo snap stop turtlebot3c.navigation
+sudo snap stop turtlebot3c-nav.navigation
 ```
