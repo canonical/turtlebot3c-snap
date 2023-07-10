@@ -37,7 +37,7 @@ The `mapping` app is a daemon that allows the robot to build a representation of
 To launch the mapping, simply type the following command:
 
 ```terminal
-sudo snap start turtlebot3c.mapping
+sudo snap start turtlebot3c-nav.mapping
 ```
 
 Drive your robot around in order to map your environment.
