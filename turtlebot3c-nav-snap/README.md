@@ -56,7 +56,7 @@ The `navigation` stack will automatically use the softlinked map.
 This command automatically select 'key_vel' as the input for the [mux](http://wiki.ros.org/topic_tools/mux) node.
 
 Note that the default `USER` of snap daemons is `root`.
-Hence, the `$SNAP_USER_COMMON` variable will point to `/root/snap/turtlebot3c/common`.
+Hence, the `$SNAP_USER_COMMON` variable will point to `/root/snap/turtlebot3c-nav/common`.
 
 ### navigation
 
