@@ -45,7 +45,7 @@ Notice that you can monitor the process through Rviz.
 Once the entire environment covered, stop the mapping by typing the following command:
 
 ```terminal
-sudo snap stop turtlebot3c.mapping
+sudo snap stop turtlebot3c-nav.mapping
 ```
 
 This will stop the process and automatically save the map as
