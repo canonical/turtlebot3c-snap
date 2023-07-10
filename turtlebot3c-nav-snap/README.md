@@ -66,7 +66,7 @@ from its current location to a desired goal while avoiding obstacles.
 To start the navigation app, simply type the following command:
 
 ```terminal
-sudo snap start turtlebot3c.navigation
+sudo snap start turtlebot3c-nav.navigation
 ```
 
 It will start the whole navigation stack and use the last map built with the
