@@ -9,7 +9,7 @@ description: |
   By default, the snap is configured for the 'waffle_pi' Turtlebot3 model.
   To select another robot model (waffle or burger) run the following,
 
-    snap set turtlebot3c turtlebot3-model=burger
+    snap set turtlebot3c-bringup turtlebot3-model=burger
 
   Similarly, the snap is configured to consider the lidar model LDS-01.
   To select the other lidar for the robot run the following,
