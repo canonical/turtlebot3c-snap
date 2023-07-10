@@ -14,7 +14,7 @@ description: |
   Similarly, the snap is configured to consider the lidar model LDS-01.
   To select the other lidar for the robot run the following,
 
-    snap set turtlebot3c lds-model=LDS-02
+    snap set turtlebot3c-bringup lds-model=LDS-02
 
   This snap is meant to run on the Turtlebot3 robot,
   but it can also be used with the simulation.
