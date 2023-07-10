@@ -27,7 +27,7 @@ The available models are: `waffle_pi`, `waffle` and `burger`.
 The model can change with the help of:
 
 ```bash
-sudo snap set turtlebot3c turtlebot3-model=waffle_pi
+sudo snap set turtlebot3c-teleop turtlebot3-model=waffle_pi
 ```
 
 ## How to use
