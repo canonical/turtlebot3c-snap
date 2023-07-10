@@ -11,7 +11,7 @@ description: |
   By default the snap runs on the robot.
   To switch to the simulation
 
-    snap set turtlebot3c simulation=true
+    snap set turtlebot3c-nav simulation=true
 
   By default the snap used the lidar LDS-01 robot.
   To select the other lidar for the robot
