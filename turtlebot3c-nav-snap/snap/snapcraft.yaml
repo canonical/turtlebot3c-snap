@@ -21,7 +21,7 @@ description: |
   By default the snap runs the waffle_pi Turtlebot3 model.
   To select another robot model (waffle or burger)
 
-    snap set turtlebot3c turtlebot3-model=burger
+    snap set turtlebot3c-nav turtlebot3-model=burger
 
 grade: stable
 confinement: strict
