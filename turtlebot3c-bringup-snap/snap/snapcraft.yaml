@@ -21,7 +21,7 @@ description: |
 
   In order to use it with the simulation, issue the following in the terminal,
 
-    snap set turtlebot3c simulation=true
+    snap set turtlebot3c-bringup simulation=true
 
 grade: stable
 confinement: strict
