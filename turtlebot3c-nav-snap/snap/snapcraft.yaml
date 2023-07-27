@@ -41,7 +41,6 @@ parts:
 
   # copy local scripts to the snap usr/bin
   local-files:
-    no_extension: True
     plugin: dump
     source: snap/local/
     organize:
