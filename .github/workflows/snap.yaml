@@ -1,7 +1,6 @@
 name: test turtlebot multi snap
 
 on:
-  pull_request:
   push:
     branches:
       - feature/multi-snap
