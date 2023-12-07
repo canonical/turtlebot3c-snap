@@ -36,7 +36,7 @@ parts:
   workspace:
     plugin: catkin
     source: https://github.com/ubuntu-robotics/turtlebot3c.git
-    source-branch: artivis-patch-1
+    source-branch: noetic-devel
     source-subdir: turtlebot3c_teleop
 
   # copy local scripts to the snap usr/bin
