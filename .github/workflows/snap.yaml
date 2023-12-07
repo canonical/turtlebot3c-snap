@@ -38,6 +38,7 @@ jobs:
           # Select the example we want to build
           path: "${{ matrix.dir }}"
           snapcraft-channel: 'latest/candidate'
+          snapcraft-args: '--enable-experimental-extensions'
 
       # Make sure the snap is installable
       - run: sudo snap install --dangerous ${{ steps.build-snap.outputs.snap }}
