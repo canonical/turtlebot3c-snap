@@ -1,0 +1,17 @@
+name: Scheduled
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  noetic-devel-snap:
+    uses: ubuntu-robotics/turtlebot3c-snap/.github/workflows/snap.yaml@main
+    with:
+      branch-name: noetic-devel
+      snap-name: turtlebot3c
+  multi-snap:
+    uses: ubuntu-robotics/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap
+    with:
+      branch-name: feature/multi-snap
+      snap-name: turtlebot3c
