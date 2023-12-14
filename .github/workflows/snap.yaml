@@ -1,7 +1,5 @@
 name: snap
 on:
-  schedule:
-    - cron: '0 0 1 * *'
   push:
     branches:
       - noetic-devel
@@ -9,24 +7,11 @@ on:
     branches:
       - noetic-devel
   workflow_dispatch:
+  workflow_call:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    outputs:
-      snap-file: ${{ steps.build-snap.outputs.snap }}
-    steps:
-    - uses: actions/checkout@v2
-    - uses: snapcore/action-build@v1
-      id: build-snap
-
-    # Make sure the snap is installable
-    - run: |
-        sudo snap install ${{ steps.build-snap.outputs.snap }} --dangerous
-    # Do some testing with the snap
-    - run: |
-        snap info turtlebot3c
-    - uses: actions/upload-artifact@v3
-      with:
-        name: turtlebot3c
-        path: ${{ steps.build-snap.outputs.snap }}
+  snap:
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
+    with:
+      branch-name: noetic-devel
+      snap-name: turtlebot3c
