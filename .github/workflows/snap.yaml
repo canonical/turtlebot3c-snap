@@ -1,8 +1,6 @@
 name: test turtlebot multi snap
 
 on:
-  schedule:
-    - cron: '0 0 1 * *'
   push:
     branches:
       - feature/multi-snap
@@ -10,6 +8,7 @@ on:
     branches:
       - feature/multi-snap
   workflow_dispatch:
+  workflow_call:
 
 jobs:
 
