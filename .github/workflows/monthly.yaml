@@ -6,6 +6,6 @@ on:
 
 jobs:
   noetic-devel-snap:
-    uses: ubuntu-robotics/turtlebot3c-snap/.github/workflows/snap.yaml@main
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@main
   multi-snap:
-    uses: ubuntu-robotics/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap
