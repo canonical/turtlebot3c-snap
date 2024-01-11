@@ -15,3 +15,22 @@ jobs:
     with:
       branch-name: noetic-devel
       snap-name: turtlebot3c
+      snap-install-args: --devmode
+      test-script: |
+                    #!/bin/bash
+
+                    ## Install ROS
+                    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+
+                    sudo apt install curl
+                    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+                    sudo apt update
+                    sudo apt install ros-noetic-desktop-full
+                    sudo apt install ros-noetic-turtlebot3-gazebo
+                    
+                    ## Launch turtlebot simulation
+                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch headless:=true
+
+                    snap info turtlebot3c
+
+                    sudo snap logs turtlebot3c.core -n 100
