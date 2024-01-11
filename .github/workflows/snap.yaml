@@ -11,8 +11,9 @@ on:
 
 jobs:
   snap:
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@F_add_ubuntu_image_option
     with:
+      ubuntu-image: ubuntu-20.04
       branch-name: noetic-devel
       snap-name: turtlebot3c
       snap-install-args: --devmode
