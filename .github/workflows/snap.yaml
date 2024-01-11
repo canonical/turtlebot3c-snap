@@ -34,7 +34,7 @@ jobs:
                     pid=$!
 
                     snap info turtlebot3c
-
+                    sudo snap set turtlebot3c simulation=true
                     sudo snap logs turtlebot3c.core -n 100
 
                     kill $pid
