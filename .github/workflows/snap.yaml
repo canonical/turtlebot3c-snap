@@ -29,12 +29,14 @@ jobs:
                     sudo apt install ros-noetic-desktop-full
                     sudo apt install ros-noetic-turtlebot3-gazebo
                     
+                    source /opt/ros/noetic/setup.sh
+
                     ## Launch turtlebot simulation
                     TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch headless:=true &
                     pid=$!
 
                     snap info turtlebot3c
                     sudo snap set turtlebot3c simulation=true
-                    sudo snap logs turtlebot3c.core -n 100
+                    #sudo snap logs turtlebot3c.core -n 10
 
                     kill $pid
