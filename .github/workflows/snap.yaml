@@ -11,7 +11,7 @@ on:
 
 jobs:
   snap:
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@F_add_ubuntu_image_option
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
     with:
       ubuntu-image: ubuntu-20.04
       branch-name: noetic-devel
@@ -34,9 +34,17 @@ jobs:
                     ## Launch turtlebot simulation
                     TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch headless:=true &
                     pid=$!
+                    sleep 20
 
                     snap info turtlebot3c
                     sudo snap set turtlebot3c simulation=true
-                    #sudo snap logs turtlebot3c.core -n 10
+                    
+                    ros2-cli.ros2 node list | grep -q "/robot_state_publisher"
+                    if [ $? -eq 0 ]; then
+                        echo "/robot_state_publisher" is running."
+                    else
+                        echo "Error - /robot_state_publisher is not running."
+                        exit 1
+                    fi
 
                     kill $pid
