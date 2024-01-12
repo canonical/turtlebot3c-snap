@@ -39,7 +39,7 @@ jobs:
                     snap info turtlebot3c
                     sudo snap set turtlebot3c simulation=true
                     
-                    ros2-cli.ros2 node list | grep -q "/robot_state_publisher"
+                    rosnode list | grep -q "/robot_state_publisher"
                     if [ $? -eq 0 ]; then
                         echo "/robot_state_publisher" is running."
                     else
