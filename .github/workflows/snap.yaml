@@ -32,9 +32,9 @@ jobs:
                     source /opt/ros/noetic/setup.sh
 
                     ## Launch turtlebot simulation
-                    timeout 30s TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch headless:=true gui:=false
-                    # pid=$!
-                    # sleep 20
+                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch headless:=true gui:=false &
+                    pid=$!
+                    sleep 20
 
                     # snap info turtlebot3c
                     # sudo snap set turtlebot3c simulation=true
@@ -47,4 +47,4 @@ jobs:
                     #     exit 1
                     # fi
 
-                    # kill $pid
+                    kill $pid
