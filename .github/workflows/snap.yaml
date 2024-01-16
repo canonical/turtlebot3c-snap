@@ -36,15 +36,15 @@ jobs:
                     pid=$!
                     sleep 20
 
-                    # snap info turtlebot3c
-                    # sudo snap set turtlebot3c simulation=true
+                    snap info turtlebot3c
+                    sudo snap set turtlebot3c simulation=true
 
-                    # rosnode list | grep -q "/robot_state_publisher"
-                    # if [ $? -eq 0 ]; then
-                    #     echo "/robot_state_publisher" is running."
-                    # else
-                    #     echo "Error - /robot_state_publisher is not running."
-                    #     exit 1
-                    # fi
+                    rosnode list | grep -q "/robot_state_publisher"
+                    if [ $? -eq 0 ]; then
+                        echo "/robot_state_publisher" is running."
+                    else
+                        echo "Error - /robot_state_publisher is not running."
+                        exit 1
+                    fi
 
                     kill $pid
