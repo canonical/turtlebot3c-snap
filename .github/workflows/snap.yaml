@@ -32,7 +32,7 @@ jobs:
                     source /opt/ros/noetic/setup.sh
 
                     ## set gui arg to false with sed since the arg is not exposed
-                    sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
+                    sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
 
                     ## Launch turtlebot simulation
                     TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch &
@@ -69,7 +69,7 @@ jobs:
 
                     ## test navigation node
                     sudo snap start turtlebot3c.navigation
-                    sleep 3
+                    sleep 5
                     check_existence rosnode move_base
                     check_existence rostopic nav_vel
                     sudo snap stop turtlebot3c.navigation
