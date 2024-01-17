@@ -31,20 +31,49 @@ jobs:
 
                     source /opt/ros/noetic/setup.sh
 
-                    ## Launch turtlebot simulation
-                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch headless:=true gui:=false &
-                    pid=$!
-                    sleep 20
+                    ## set gui arg to false with sed since the arg is not exposed
+                    sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
 
-                    snap info turtlebot3c
+                    ## Launch turtlebot simulation
+                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch &
+                    pid=$!
+
                     sudo snap set turtlebot3c simulation=true
 
-                    rosnode list | grep -q "/robot_state_publisher"
-                    if [ $? -eq 0 ]; then
-                        echo "/robot_state_publisher" is running."
-                    else
-                        echo "Error - /robot_state_publisher is not running."
-                        exit 1
-                    fi
+                    sleep 5
+
+                    check_existence() {
+                        local topic_or_node=$1
+                        local name=$2
+                        $1 list | grep -q "/$name"
+                        if [ $? -eq 0 ]; then
+                            echo "$name is running."
+                        else
+                            sleep 5
+                            echo "Error $name is not running."
+                            sudo snap stop turtlebot3c
+                            killall -9 rosmaster
+                            exit 1
+                        fi
+                    }
+
+                    ## test core robot_state_publisher
+                    check_existence rosnode robot_state_publisher
+
+                    ## test mapping node
+                    sudo snap start turtlebot3c.mapping
+                    sleep 5
+                    check_existence rosnode turtlebot3_slam_gmapping
+                    check_existence rostopic map
+                    sudo snap stop turtlebot3c.mapping
+
+                    ## test navigation node
+                    sudo snap start turtlebot3c.navigation
+                    sleep 3
+                    check_existence rosnode move_base
+                    check_existence rostopic nav_vel
+                    sudo snap stop turtlebot3c.navigation
 
                     kill $pid
+                    sudo snap stop turtlebot3c
+                    killall -9 rosmaster
