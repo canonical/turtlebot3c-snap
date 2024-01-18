@@ -13,40 +13,27 @@ on:
 jobs:
 
   # Collect all relative paths containing a 'snap/snapcraft.yaml'
-  collect_dirs:
+  collect_snap_names:
     runs-on: ubuntu-latest
     outputs:
-      dirs: ${{ steps.dirs.outputs.dirs }}
+      snap-names: ${{ steps.snap-names.outputs.snap-names }}
     steps:
       - uses: actions/checkout@v3
-      - id: dirs
-        run: echo "dirs=$(find . -type f -name 'snapcraft.yaml' | sed -r 's|\/snap/[^/]+$||' |sort |uniq |jq --raw-input --slurp --compact-output 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+      - id: snap-names
+        run: echo "snap-names=$(find . -type f -name 'snapcraft.yaml' | sed -r 's|^\./([^/]+)/snap/snapcraft.yaml|\1|' | sed 's/-snap$//' | sort | uniq | jq --raw-input --slurp --compact-output 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   # Run snapcraft for each example
   run_tests:
-    needs: collect_dirs
-    runs-on: ubuntu-latest
+    needs: collect_snap_names
     strategy:
       fail-fast: false
       matrix:
-        dir: ${{ fromJson(needs.collect_dirs.outputs.dirs) }}
-    name: "Snap ${{ matrix.dir }}"
-    steps:
-      - uses: actions/checkout@v3
-      - uses: snapcore/action-build@v1
-        id: build-snap
-        with:
-          # Select the example we want to build
-          path: "${{ matrix.dir }}"
-          snapcraft-channel: 'latest/candidate'
-          snapcraft-args: '--enable-experimental-extensions'
-
-      # Make sure the snap is installable
-      - run: sudo snap install --dangerous ${{ steps.build-snap.outputs.snap }}
-
-      - uses: actions/upload-artifact@v3
-        continue-on-error: true
-        with:
-          name: snaps
-          path: ${{ steps.build-snap.outputs.snap }}
-          retention-days: 7
+        snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
+    name: "Snap ${{ matrix.snap-name }}"
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@F_add_option_to_select_snap_path
+    with:
+      branch-name: feature/multi-snap-add-CI-tests
+      snap-name: ${{ matrix.snap-name }}
+      snapcraft-build-path: ./${{ matrix.snap-name }}-snap
+      snap-install-args: --dangerous
+      snapcraft-args: --enable-experimental-extensions
