@@ -5,3 +5,8 @@ snapctl set turtlebot3-model=waffle_pi
 
 # set default ROS master hostname
 snapctl set ros-master-host=$(hostname).local
+
+if ! snapctl is-connected ros-noetic; then
+  logger -t ${SNAP_NAME} "Plug 'ros-noetic' isn't connected, \
+    please run: snap connect ${SNAP_NAME}:ros-noetic <providing-snap>"
+fi

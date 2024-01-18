@@ -1,0 +1,3 @@
+#!/bin/sh -e
+
+snapctl stop --disable ${SNAP_NAME}.core 2>&1 || true
