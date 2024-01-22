@@ -50,7 +50,28 @@ jobs:
             #!/bin/bash
             set -x
 
-            # Iterate through each file in the folder
+            ## Install ROS
+            echo "Installing ROS"
+            sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+
+            sudo apt install curl
+            curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+            sudo apt -q update
+            sudo apt install -q ros-noetic-desktop-full
+            sudo apt install -q ros-noetic-turtlebot3-gazebo
+
+            source /opt/ros/noetic/setup.sh
+
+            ## set gui arg to false
+            sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
+            ## Launch turtlebot simulation
+
+            #echo "launching gazebo sim"
+            TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch debug:=true &
+            pid=$!
+
+            echo "installing snaps"
+            # # Iterate through each file in the folder
             for dir in */; do
                 cd "$dir" || exit
                 for file in *; do
@@ -61,36 +82,6 @@ jobs:
                 done
                 cd ..
             done
-
-            sudo snap connect turtlebot3c-bringup:ros-noetic ros-noetic-robot
-            sudo snap connect turtlebot3c-nav:ros-noetic ros-noetic-robot
-            sudo snap connect turtlebot3c-teleop:ros-noetic ros-noetic-robot
-
-            ## Install ROS
-            sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-
-            sudo apt install curl
-            curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
-            sudo apt update
-            sudo apt install -q ros-noetic-desktop-full
-            sudo apt install -q ros-noetic-turtlebot3-gazebo
-
-            source /opt/ros/noetic/setup.sh
-
-            ## set gui arg to false
-            #sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
-            ## Launch turtlebot simulation
-
-            #echo "launching gazebo sim"
-            #TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch debug:=true &
-            roscore &
-            pid=$!
-
-            sudo snap set turtlebot3c-bringup simulation=true
-            sudo snap start turtlebot3c-nav.mapping
-            sudo snap start turtlebot3c-nav.navigation
-
-            sleep 5
 
             check_existence() {
                 local topic_or_node=$1
@@ -114,15 +105,50 @@ jobs:
                 done
             }
 
-            ## test core robot_state_publisher
+            sudo snap connect turtlebot3c-bringup:ros-noetic ros-noetic-robot
+            sudo snap connect turtlebot3c-nav:ros-noetic ros-noetic-robot
+            sudo snap connect turtlebot3c-teleop:ros-noetic ros-noetic-robot
+
+            sudo snap set turtlebot3c-bringup simulation=true
+            sleep 5
+            sudo snap start turtlebot3c-teleop.core
+            sleep 5
+
+            # test core robot_state_publisher
             check_existence rosnode robot_state_publisher 30
 
             ## test mapping node
+            sudo snap start turtlebot3c-nav.mapping
+            sleep 5
             check_existence rosnode turtlebot3_slam_gmapping 30
             check_existence rostopic map 30
+            sudo snap stop turtlebot3c-nav.mapping
 
-            ## test navigation node
+            echo "wait for post-stop-command to finish"
+            sleep 20
+
+            timeout=30
+            start_time=$(date +%s)
+            while true; do
+              echo "check map exists.."
+              sudo bash -c 'cd /root/snap/turtlebot3c-nav/common/map/ && ls | grep -q ".yaml"'
+              if [ $? -eq 0 ]; then
+                echo "map found - starting navigation"
+                exit 0
+              fi
+              current_time=$(date +%s)
+              elapsed_time=$((current_time - start_time))
+              if [ $elapsed_time -ge $timeout ]; then
+                echo "Map not found"
+                exit 1
+              fi
+              sleep 1
+            done
+
+            sudo snap start turtlebot3c-nav.navigation
+            check_existence rosnode move_base 30
             check_existence rostopic nav_vel 30
+            sudo snap stop turtlebot3c-nav.navigation
 
             kill $pid
             sudo snap stop turtlebot3c-bringup
