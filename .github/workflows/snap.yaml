@@ -1,0 +1,31 @@
+name: snap
+on:
+  push:
+    branches:
+      - noetic-devel
+  pull_request:
+    branches:
+      - noetic-devel
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  snap:
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
+    with:
+      ubuntu-image: ubuntu-20.04
+      branch-name: noetic-devel
+      snap-name: turtlebot3c
+      snap-install-args: --devmode
+      test-script: |
+                    #!/bin/bash
+
+                    sudo snap services turtlebot3c | grep -E "map-cleaner|timer-activated"
+                    if [ $? -eq 0 ]; then
+                        echo "map-cleaner deamon exists"
+                    else
+                      echo "map-cleaner does not exist"
+                      exit 1
+                    fi
+
+                    sudo snap start turtlebot3c.map-cleaner
