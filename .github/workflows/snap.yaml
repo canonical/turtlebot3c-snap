@@ -13,7 +13,6 @@ jobs:
   snap:
     uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
     with:
-      ubuntu-image: ubuntu-20.04
       branch-name: developer-guide-part2-answer
       snap-name: turtlebot3c
       snap-install-args: --devmode
@@ -28,4 +27,16 @@ jobs:
                       exit 1
                     fi
 
-                    sudo snap start turtlebot3c.map-cleaner
+                    MAP_FOLDER=/root/snap/turtlebot3c/common/map/
+
+                    touch $MAP_FOLDER/dummy_map.yaml
+                    touch $MAP_FOLDER/dummy_map.pgm
+
+                    sudo snap run turtlebot3c.map-cleaner
+
+                    if [ -z "$(ls -A "$MAP_FOLDER")" ]; then
+                      echo "map folder has been cleaned"
+                    else
+                      echo "Error - map folder was not cleaned"
+                      exit 1
+                    fi
