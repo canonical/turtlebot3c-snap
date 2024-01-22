@@ -1,0 +1,42 @@
+name: snap
+on:
+  push:
+    branches:
+      - developer-guide-part2-answer
+  pull_request:
+    branches:
+      - developer-guide-part2-answer
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  snap:
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
+    with:
+      branch-name: developer-guide-part2-answer
+      snap-name: turtlebot3c
+      snap-install-args: --devmode
+      test-script: |
+                    #!/bin/bash
+
+                    sudo snap services turtlebot3c | grep -E "map-cleaner|timer-activated"
+                    if [ $? -eq 0 ]; then
+                        echo "map-cleaner deamon exists"
+                    else
+                      echo "map-cleaner does not exist"
+                      exit 1
+                    fi
+
+                    MAP_FOLDER=/root/snap/turtlebot3c/common/map/
+
+                    touch $MAP_FOLDER/dummy_map.yaml
+                    touch $MAP_FOLDER/dummy_map.pgm
+
+                    sudo snap run turtlebot3c.map-cleaner
+
+                    if [ -z "$(ls -A "$MAP_FOLDER")" ]; then
+                      echo "map folder has been cleaned"
+                    else
+                      echo "Error - map folder was not cleaned"
+                      exit 1
+                    fi
