@@ -2,10 +2,10 @@ name: snap
 on:
   push:
     branches:
-      - noetic-devel
+      - developer-guide-part2-answer
   pull_request:
     branches:
-      - noetic-devel
+      - developer-guide-part2-answer
   workflow_dispatch:
   workflow_call:
 
@@ -14,7 +14,7 @@ jobs:
     uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
     with:
       ubuntu-image: ubuntu-20.04
-      branch-name: noetic-devel
+      branch-name: developer-guide-part2-answer
       snap-name: turtlebot3c
       snap-install-args: --devmode
       test-script: |
