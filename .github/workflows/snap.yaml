@@ -32,7 +32,7 @@ jobs:
     name: "Snap ${{ matrix.snap-name }}"
     uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@F_add_option_to_select_snap_path
     with:
-      branch-name: feature/multi-snap-add-CI-tests
+      branch-name: feature/multi-snap
       snap-name: ${{ matrix.snap-name }}
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
       snap-install-args: --dangerous
@@ -56,7 +56,7 @@ jobs:
                 for file in *; do
                     # Check if it is a regular file
                     if [ -f "$file" ]; then
-                        sudo snap install "$file" --dangerous
+                        sudo snap install "$file" --devmode
                     fi
                 done
                 cd ..
@@ -76,26 +76,20 @@ jobs:
             sudo apt install -q ros-noetic-turtlebot3-gazebo
 
             source /opt/ros/noetic/setup.sh
-            sleep 10
 
             ## set gui arg to false
-            sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
+            #sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
             ## Launch turtlebot simulation
 
-            echo "launching gazebo sim"
-            TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch debug:=true &
+            #echo "launching gazebo sim"
+            #TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch debug:=true &
+            roscore &
             pid=$!
 
-            until rostopic list | grep -q "/joint_states"
-            do
-              echo "wait for gazebo to setup joint states"
-              sleep 5
-            done
-
-            echo "setting turtlebot sim"
             sudo snap set turtlebot3c-bringup simulation=true
             sudo snap start turtlebot3c-nav.mapping
             sudo snap start turtlebot3c-nav.navigation
+
             sleep 5
 
             check_existence() {
@@ -121,27 +115,14 @@ jobs:
             }
 
             ## test core robot_state_publisher
-            #rosnode list
-            echo "checking existence"
             check_existence rosnode robot_state_publisher 30
-            echo "we got robot_state_publisher"
+
             ## test mapping node
-            echo "start mapping"
-            #sudo snap start turtlebot3c-nav.mapping
-            #echo "started mapping"
-            #rostopic list
-            #rosnode list
             check_existence rosnode turtlebot3_slam_gmapping 30
             check_existence rostopic map 30
-            
+
             ## test navigation node
-            echo "start navigation"
-            #sudo snap start turtlebot3c-nav.navigation
-            #echo "started navigation"
-            check_existence rosnode move_base 30
             check_existence rostopic nav_vel 30
-            
-            echo "yo, exiting"
 
             kill $pid
             sudo snap stop turtlebot3c-bringup
