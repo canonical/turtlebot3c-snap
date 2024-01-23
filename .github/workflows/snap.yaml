@@ -39,7 +39,6 @@ jobs:
                     pid=$!
 
                     sudo snap set turtlebot3c simulation=true
-
                     sleep 5
 
                     check_existence() {
@@ -74,19 +73,28 @@ jobs:
                     sudo snap start turtlebot3c.mapping
                     check_existence rosnode turtlebot3_slam_gmapping 30
                     check_existence rostopic map 30
-
-                    echo "moving the robot"
-                    timeout 5s rostopic pub  /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
                     sudo snap stop turtlebot3c.mapping
 
-                    file_path="/root/snap/turtlebot3c/common/map/current_map.yaml"
+                    echo "give time to post-stop-command to complete"
+                    sleep 20
 
-                    until sudo [ -e "$file_path" ]; do
-                        echo "Map not yet found. Waiting..."
+                    timeout=30
+                    start_time=$(date +%s)
+                    while true; do
+                        echo "check map exists.."
+                        sudo bash -c 'cd /root/snap/turtlebot3c/common/map/ && ls | grep -q "current_map.yaml"'
+                        if [ $? -eq 0 ]; then
+                          echo "map found - starting navigation"
+                          exit 0
+                        fi
+                        current_time=$(date +%s)
+                        elapsed_time=$((current_time - start_time))
+                        if [ $elapsed_time -ge $timeout ]; then
+                            echo "Map not found"
+                            exit 1
+                        fi
                         sleep 1
                     done
-
-                    echo "Map found starting navigation"
 
                     ## test navigation node
                     sudo snap start turtlebot3c.navigation
