@@ -32,10 +32,10 @@ jobs:
                     source /opt/ros/noetic/setup.sh
 
                     ## set gui arg to false with sed since the arg is not exposed
-                    sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
+                    sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_world.launch
 
                     ## Launch turtlebot simulation
-                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch &
+                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch &
                     pid=$!
 
                     sudo snap set turtlebot3c simulation=true
@@ -61,7 +61,6 @@ jobs:
                             if [ $elapsed_time -ge $timeout ]; then
                                 echo "Error $name is not running."
                                 sudo snap stop turtlebot3c
-                                killall -9 rosmaster
                                 exit 1
                             fi
                             sleep 1
@@ -69,17 +68,30 @@ jobs:
                     }
 
                     ## test core robot_state_publisher
-                    check_existence rosnode robot_state_publisher
+                    check_existence rosnode robot_state_publisher 30
 
                     ## test mapping node
                     sudo snap start turtlebot3c.mapping
-                    check_existence rosnode turtlebot3_slam_gmapping 10
-                    check_existence rostopic map 10
+                    check_existence rosnode turtlebot3_slam_gmapping 30
+                    check_existence rostopic map 30
+
+                    echo "moving the robot"
+                    timeout 5s rostopic pub  /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
                     sudo snap stop turtlebot3c.mapping
+
+                    file_path="/root/snap/turtlebot3c/common/map/current_map.yaml"
+
+                    until sudo [ -e "$file_path" ]; do
+                        echo "Map not yet found. Waiting..."
+                        sleep 1
+                    done
+
+                    echo "Map found starting navigation"
 
                     ## test navigation node
                     sudo snap start turtlebot3c.navigation
-                    check_existence rostopic nav_vel 10
+                    check_existence rosnode move_base 30
+                    check_existence rostopic nav_vel 30
                     sudo snap stop turtlebot3c.navigation
 
                     kill $pid
