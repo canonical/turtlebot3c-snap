@@ -49,7 +49,19 @@ jobs:
                       fi
                       sleep 1
                     done
-                    
+
+                    while [ -z "${topic_joint_data}" ]; do
+                      echo "waiting for scanning data"
+                      topic_joint_data=$(rostopic echo -n 10 /joint_states 2>/dev/null)
+                      if [ -z "${topic_joint_data}" ]; then
+                        echo "Topic /joint_states is not publishing data."
+                      else
+                        echo "Topic /joint_states is publishing data. Exiting."
+                        echo "$topic_joint_data"
+                      fi
+                      sleep 1
+                    done
+
                     check_existence() {
                         local topic_or_node=$1
                         local name=$2
@@ -77,17 +89,13 @@ jobs:
 
                     echo "starting robot state pub"
                     sudo snap set turtlebot3c simulation=true
+                    sleep 30
                     sudo snap start turtlebot3c.teleop
                     check_existence rostopic tf 30
 
-                    sudo snap logs turtlebot3c.core -n 200
-
                     timeout 5s rosrun tf tf_monitor
 
-                    timeout 10s rosrun tf tf_monitor base_link wheel_left_link 
-                    timeout 10s rosrun tf tf_echo base_link wheel_left_link
-
-                    sudo snap logs turtlebot3c.core -n 200
+                    timeout 60s rosrun tf tf_echo base_link wheel_left_link
 
                     ## test core robot_state_publisher
                     check_existence rosnode robot_state_publisher 30
@@ -97,7 +105,6 @@ jobs:
                     check_existence rosnode turtlebot3_slam_gmapping 30
                     check_existence rostopic map 30
                     echo "moving the robot"
-                    top -bn1
                     timeout 5s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
 
                     echo "check map topic is not empty"
@@ -134,7 +141,6 @@ jobs:
                         fi
                         sleep 1
                     done
-                    top -bn1
                     ## test navigation node
                     sudo snap start turtlebot3c.navigation
                     check_existence rosnode move_base 30
