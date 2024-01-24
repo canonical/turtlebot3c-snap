@@ -20,47 +20,20 @@ jobs:
       test-script: |
                     #!/bin/bash
 
-                    ## Install ROS
-                    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-
-                    sudo apt install curl
-                    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
-                    sudo apt update
-                    sudo apt install ros-noetic-desktop-full
-                    sudo apt install ros-noetic-turtlebot3-gazebo
-
-                    source /opt/ros/noetic/setup.sh
-
-                    ## set gui arg to false with sed since the arg is not exposed
-                    sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
-
-                    ## Launch turtlebot simulation
-                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch &
-                    pid=$!
-
-                    while [ -z "${topic_data}" ]; do
-                      echo "waiting for scanning data"
-                      topic_data=$(rostopic echo -n 1 /scan --noarr 2>/dev/null)
-                      if [ -z "${topic_data}" ]; then
-                        echo "Topic scan is not publishing data."
-                      else
-                        echo "Topic scan is publishing data. Exiting."
-                        echo "$topic_data"
-                      fi
-                      sleep 1
-                    done
-
-                    while [ -z "${topic_joint_data}" ]; do
-                      echo "waiting for scanning data"
-                      topic_joint_data=$(rostopic echo -n 10 /joint_states 2>/dev/null)
-                      if [ -z "${topic_joint_data}" ]; then
-                        echo "Topic /joint_states is not publishing data."
-                      else
-                        echo "Topic /joint_states is publishing data. Exiting."
-                        echo "$topic_joint_data"
-                      fi
-                      sleep 1
-                    done
+                    check_publishing() {
+                        local name=$1
+                        while [ -z "${topic_data}" ]; do
+                          echo "waiting for /$name data"
+                          topic_data=$(rostopic echo -n 10 /$name 2>/dev/null)
+                          if [ -z "${topic_data}" ]; then
+                            echo "Topic /$name is not publishing data."
+                          else
+                            echo "Topic /$name is publishing data. Exiting."
+                            echo "$topic_data"
+                          fi
+                          sleep 1
+                        done
+                    }
 
                     check_existence() {
                         local topic_or_node=$1
@@ -87,17 +60,34 @@ jobs:
                         done
                     }
 
-                    echo "starting robot state pub"
+                    ## Install ROS
+                    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+
+                    sudo apt install curl
+                    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+                    sudo apt update
+                    sudo apt install ros-noetic-desktop-full
+                    sudo apt install ros-noetic-turtlebot3-gazebo
+
+                    source /opt/ros/noetic/setup.sh
+
+                    echo "Set the simulation parameter"
                     sudo snap set turtlebot3c simulation=true
-                    sleep 30
-                    sudo snap start turtlebot3c.teleop
-                    check_existence rostopic tf 30
+                    sleep 10
 
-                    timeout 5s rosrun tf tf_monitor
+                    ## set gui arg to false with sed since the arg is not exposed
+                    sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
 
-                    timeout 60s rosrun tf tf_echo base_link wheel_left_link
+                    ## Launch turtlebot simulation
+                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch &
+                    pid=$!
+
+                    echo "check simulation is running"
+                    check_publishing scan
+                    check_publishing joint_states
 
                     ## test core robot_state_publisher
+                    check_existence rostopic tf 30
                     check_existence rosnode robot_state_publisher 30
 
                     ## test mapping node
@@ -105,25 +95,12 @@ jobs:
                     check_existence rosnode turtlebot3_slam_gmapping 30
                     check_existence rostopic map 30
                     echo "moving the robot"
+                    echo "move robot"
                     timeout 5s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
-
-                    echo "check map topic is not empty"
-                    while [ -z "${topic_map_data}" ]; do
-                      echo "waiting for map data"
-                      topic_map_data=$(rostopic echo -n 1 /map --noarr 2>/dev/null)
-                      if [ -z "${topic_map_data}" ]; then
-                        echo "Topic map is not publishing data."
-                      else
-                        echo "Topic map is publishing data. Exiting."
-                        echo "$topic_map_data"
-                      fi
-                      sleep 1
-                    done
+                    check_publishing map
                     sudo snap stop turtlebot3c.mapping
-
-                    echo "printing logs"
-                    sudo snap logs turtlebot3c.mapping -n 200
-
+                    
+                    ## check map has been created
                     timeout=30
                     start_time=$(date +%s)
                     while true; do
@@ -141,6 +118,7 @@ jobs:
                         fi
                         sleep 1
                     done
+
                     ## test navigation node
                     sudo snap start turtlebot3c.navigation
                     check_existence rosnode move_base 30
