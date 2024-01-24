@@ -32,16 +32,24 @@ jobs:
                     source /opt/ros/noetic/setup.sh
 
                     ## set gui arg to false with sed since the arg is not exposed
-                    sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_world.launch
+                    sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
 
                     ## Launch turtlebot simulation
-                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch &
+                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch &
                     pid=$!
 
-                    sleep 120
-
-                    sudo snap set turtlebot3c simulation=true
-
+                    while [ -z "${topic_data}" ]; do
+                      echo "waiting for scanning data"
+                      topic_data=$(rostopic echo -n 1 /scan --noarr 2>/dev/null)
+                      if [ -z "${topic_data}" ]; then
+                        echo "Topic scan is not publishing data."
+                      else
+                        echo "Topic scan is publishing data. Exiting."
+                        echo "$topic_data"
+                      fi
+                      sleep 1
+                    done
+                    
                     check_existence() {
                         local topic_or_node=$1
                         local name=$2
@@ -67,6 +75,20 @@ jobs:
                         done
                     }
 
+                    echo "starting robot state pub"
+                    sudo snap set turtlebot3c simulation=true
+                    sudo snap start turtlebot3c.teleop
+                    check_existence rostopic tf 30
+
+                    sudo snap logs turtlebot3c.core -n 200
+
+                    timeout 5s rosrun tf tf_monitor
+
+                    timeout 10s rosrun tf tf_monitor base_link wheel_left_link 
+                    timeout 10s rosrun tf tf_echo base_link wheel_left_link
+
+                    sudo snap logs turtlebot3c.core -n 200
+
                     ## test core robot_state_publisher
                     check_existence rosnode robot_state_publisher 30
 
@@ -75,11 +97,25 @@ jobs:
                     check_existence rosnode turtlebot3_slam_gmapping 30
                     check_existence rostopic map 30
                     echo "moving the robot"
-                    timeout 5s rostopic pub  /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+                    top -bn1
+                    timeout 5s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+
+                    echo "check map topic is not empty"
+                    while [ -z "${topic_map_data}" ]; do
+                      echo "waiting for map data"
+                      topic_map_data=$(rostopic echo -n 1 /map --noarr 2>/dev/null)
+                      if [ -z "${topic_map_data}" ]; then
+                        echo "Topic map is not publishing data."
+                      else
+                        echo "Topic map is publishing data. Exiting."
+                        echo "$topic_map_data"
+                      fi
+                      sleep 1
+                    done
                     sudo snap stop turtlebot3c.mapping
 
-                    echo "give time to post-stop-command to complete"
-                    sudo snap logs turtlebot3c.mapping -n 100
+                    echo "printing logs"
+                    sudo snap logs turtlebot3c.mapping -n 200
 
                     timeout=30
                     start_time=$(date +%s)
@@ -98,7 +134,7 @@ jobs:
                         fi
                         sleep 1
                     done
-
+                    top -bn1
                     ## test navigation node
                     sudo snap start turtlebot3c.navigation
                     check_existence rosnode move_base 30
