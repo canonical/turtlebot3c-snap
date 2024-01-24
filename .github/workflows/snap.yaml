@@ -38,8 +38,9 @@ jobs:
                     TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch &
                     pid=$!
 
+                    sleep 120
+
                     sudo snap set turtlebot3c simulation=true
-                    sleep 5
 
                     check_existence() {
                         local topic_or_node=$1
@@ -78,13 +79,13 @@ jobs:
                     sudo snap stop turtlebot3c.mapping
 
                     echo "give time to post-stop-command to complete"
-                    sleep 20
+                    sudo snap logs turtlebot3c.mapping -n 100
 
                     timeout=30
                     start_time=$(date +%s)
                     while true; do
                         echo "check map exists.."
-                        sudo bash -c 'cd /root/snap/turtlebot3c/common/map/ && ls | grep -q ".yaml"'
+                        sudo bash -c 'cd /root/snap/turtlebot3c/common/map/ && ls | grep -q "current_map.yaml"'
                         if [ $? -eq 0 ]; then
                           echo "map found - starting navigation"
                           exit 0
