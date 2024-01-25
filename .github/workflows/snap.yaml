@@ -30,10 +30,8 @@ jobs:
                           topic_data=$(rostopic echo -n 10 /$name 2>/dev/null)
                           if [ -z "${topic_data}" ]; then
                             echo "Topic /$name is not publishing data."
-                            return 0
                           else
                             echo "Topic /$name is publishing data. Exiting."
-                            exit 1
                           fi
 
                           local current_time=$(date +%s)
