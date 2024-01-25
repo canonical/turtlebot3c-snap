@@ -123,6 +123,7 @@ jobs:
             echo "Set the simulation parameter"
             sudo snap set turtlebot3c-bringup simulation=true
             sudo snap set turtlebot3c-nav simulation=true
+            sudo snap start turtlebot3c-teleop.core
             sleep 10
 
             ## set gui arg to false with sed since the arg is not exposed
@@ -136,14 +137,17 @@ jobs:
             check_publishing scan
             check_publishing joint_states
 
-            sudo snap start turtlebot3c-teleop.core
+            echo "check core logs"
+            sudo snap logs turtlebot3c-bringup.core -n 100
+
 
             ## test core robot_state_publisher
             check_existence rostopic tf 30
             check_existence rosnode robot_state_publisher 30
-
             ## test mapping node
             sudo snap start turtlebot3c-nav.mapping
+            sleep 5
+            echo "check mapping logs"
             sudo snap logs turtlebot3c-nav.mapping -n 200
             check_existence rostopic map 30
             check_existence rosnode turtlebot3_slam_gmapping 30
