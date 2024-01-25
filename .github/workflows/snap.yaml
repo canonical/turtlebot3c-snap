@@ -153,7 +153,7 @@ jobs:
             rosnode list
             
             echo "publish once"
-            rostopic pub /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+            rostopic pub --once /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
             
             echo "timeout with preserve status"
             timeout 10s --preserve-status rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
