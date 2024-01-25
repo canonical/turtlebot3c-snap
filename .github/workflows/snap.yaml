@@ -118,11 +118,16 @@ jobs:
             sudo snap connect turtlebot3c-bringup:ros-noetic ros-noetic-robot
             sudo snap connect turtlebot3c-nav:ros-noetic ros-noetic-robot
             sudo snap connect turtlebot3c-teleop:ros-noetic ros-noetic-robot
-            sleep 10
+            sleep 20
+
+            sudo snap connections turtlebot3c-bringup
+            sudo snap connections turtlebot3c-nav
+            sudo snap connections turtlebot3c-teleop
 
             echo "Set the simulation parameter"
             sudo snap set turtlebot3c-bringup simulation=true
-            sleep 10
+            snap set turtlebot3c-nav simulation=true
+            sleep 20
 
             ## set gui arg to false with sed since the arg is not exposed
             sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
@@ -142,7 +147,6 @@ jobs:
             check_existence rosnode robot_state_publisher 30
 
             ## test mapping node
-            snap set turtlebot3c-nav simulation=true
             sudo snap start turtlebot3c-nav.mapping
             check_existence rosnode turtlebot3_slam_gmapping 30
             check_existence rostopic map 30
