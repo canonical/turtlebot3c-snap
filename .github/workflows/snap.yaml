@@ -118,7 +118,7 @@ jobs:
             sudo snap connect turtlebot3c-bringup:ros-noetic ros-noetic-robot
             sudo snap connect turtlebot3c-nav:ros-noetic ros-noetic-robot
             sudo snap connect turtlebot3c-teleop:ros-noetic ros-noetic-robot
-            sleep 20
+            sleep 10
 
             echo "Set the simulation parameter"
             sudo snap set turtlebot3c-bringup simulation=true
@@ -143,6 +143,7 @@ jobs:
 
             ## test mapping node
             sudo snap start turtlebot3c-nav.mapping
+            sleep 5
             check_existence rostopic map 30
             check_existence rosnode turtlebot3_slam_gmapping 30
             echo "moving the robot"
