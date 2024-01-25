@@ -123,6 +123,8 @@ jobs:
             echo "Set the simulation parameter"
             sudo snap set turtlebot3c-bringup simulation=true
             sudo snap set turtlebot3c-nav simulation=true
+            sleep 10
+
             sudo snap start turtlebot3c-teleop.core
             check_existence rosnode mux 30
 
