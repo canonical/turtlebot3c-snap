@@ -13,5 +13,126 @@ jobs:
   snap:
     uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
     with:
+      ubuntu-image: ubuntu-20.04
       branch-name: noetic-devel
       snap-name: turtlebot3c
+      snap-install-args: --dangerous
+      test-script: |
+                    #!/bin/bash
+
+                    check_publishing() {
+                        local name=$1
+                        local timeout=$2
+                        local start_time=$(date +%s)
+
+                        while [ -z "${topic_data}" ]; do
+                          echo "waiting for /$name data"
+                          topic_data=$(rostopic echo -n 10 /$name 2>/dev/null)
+                          if [ -z "${topic_data}" ]; then
+                            echo "Topic /$name is not publishing data."
+                          else
+                            echo "Topic /$name is publishing data. Exiting."
+                          fi
+
+                          local current_time=$(date +%s)
+                          local elapsed_time=$((current_time - start_time))
+                          
+                          if [ $elapsed_time -ge $timeout ]; then
+                              echo "Error $name is not running."
+                              exit 1
+                          fi
+                          sleep 1
+                        done
+                    }
+
+                    check_existence() {
+                        local topic_or_node=$1
+                        local name=$2
+                        local timeout=$3
+                        local start_time=$(date +%s)
+
+                        while true; do
+                            $topic_or_node list | grep -q "/$name"
+                            if [ $? -eq 0 ]; then
+                                echo "$name is running."
+                                return 0
+                            fi
+
+                            local current_time=$(date +%s)
+                            local elapsed_time=$((current_time - start_time))
+
+                            if [ $elapsed_time -ge $timeout ]; then
+                                echo "Error $name is not running."
+                                sudo snap stop turtlebot3c
+                                exit 1
+                            fi
+                            sleep 1
+                        done
+                    }
+
+                    ## Install ROS
+                    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+
+                    sudo apt install curl
+                    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+                    sudo apt update
+                    sudo apt install ros-noetic-desktop-full
+                    sudo apt install ros-noetic-turtlebot3-gazebo
+
+                    source /opt/ros/noetic/setup.sh
+
+                    echo "Set the simulation parameter"
+                    sudo snap set turtlebot3c simulation=true
+                    sleep 10
+
+                    ## set gui arg to false with sed since the arg is not exposed
+                    sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
+
+                    ## Launch turtlebot simulation
+                    TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch &
+                    pid=$!
+
+                    echo "check simulation is running"
+                    check_publishing scan 30
+                    check_publishing joint_states 30
+
+                    ## test core robot_state_publisher
+                    check_existence rostopic tf 30
+                    check_existence rosnode robot_state_publisher 30
+
+                    ## test mapping node
+                    sudo snap start turtlebot3c.mapping
+                    check_existence rosnode turtlebot3_slam_gmapping 30
+                    check_existence rostopic map 30
+                    echo "moving the robot"
+                    timeout 5s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+                    check_publishing map 30
+                    sudo snap stop turtlebot3c.mapping
+                    
+                    ## check map has been created
+                    timeout=30
+                    start_time=$(date +%s)
+                    while true; do
+                        echo "check map exists.."
+                        sudo bash -c 'cd /root/snap/turtlebot3c/common/map/ && ls | grep -q "current_map.yaml"'
+                        if [ $? -eq 0 ]; then
+                          echo "map found - starting navigation"
+                          break
+                        fi
+                        current_time=$(date +%s)
+                        elapsed_time=$((current_time - start_time))
+                        if [ $elapsed_time -ge $timeout ]; then
+                            echo "Map not found"
+                            exit 1
+                        fi
+                        sleep 1
+                    done
+
+                    ## test navigation node
+                    sudo snap start turtlebot3c.navigation
+                    check_existence rosnode move_base 30
+                    check_existence rostopic nav_vel 30
+                    sudo snap stop turtlebot3c.navigation
+
+                    kill $pid
+                    sudo snap stop turtlebot3c
