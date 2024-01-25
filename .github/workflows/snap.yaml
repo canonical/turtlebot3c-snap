@@ -142,6 +142,7 @@ jobs:
             check_existence rosnode robot_state_publisher 30
 
             ## test mapping node
+            snap set turtlebot3c-nav simulation=true
             sudo snap start turtlebot3c-nav.mapping
             check_existence rosnode turtlebot3_slam_gmapping 30
             check_existence rostopic map 30
