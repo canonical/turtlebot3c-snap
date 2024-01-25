@@ -151,8 +151,14 @@ jobs:
             echo "moving the robot"
             rostopic list
             rosnode list
-            timeout 10s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]' > output.log
-            cat output.log
+            
+            echo "publish once"
+            rostopic pub /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+            
+            echo "timeout with preserve status"
+            timeout 10s --preserve-status rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+            echo $?
+
             check_publishing map
             sudo snap stop turtlebot3c-nav.mapping
 
