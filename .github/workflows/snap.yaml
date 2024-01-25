@@ -124,7 +124,7 @@ jobs:
             sudo snap set turtlebot3c-bringup simulation=true
             sudo snap set turtlebot3c-nav simulation=true
             sudo snap start turtlebot3c-teleop.core
-            sleep 10
+            check_existence rosnode mux 30
 
             ## set gui arg to false with sed since the arg is not exposed
             sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
@@ -143,11 +143,17 @@ jobs:
 
             ## test mapping node
             sudo snap start turtlebot3c-nav.mapping
-            sleep 5
+            sleep 10
             check_existence rostopic map 30
             check_existence rosnode turtlebot3_slam_gmapping 30
             echo "moving the robot"
             rostopic list
+            rosnode list
+            for ((i=1; i<=10; i++)); do
+              rostopic pub /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+              sleep 1
+              rostopic echo -n 1 /cmd_vel
+            done
             timeout 10s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
             check_publishing map
             sudo snap stop turtlebot3c-nav.mapping
