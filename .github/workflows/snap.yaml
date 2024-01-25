@@ -120,14 +120,10 @@ jobs:
             sudo snap connect turtlebot3c-teleop:ros-noetic ros-noetic-robot
             sleep 20
 
-            sudo snap connections turtlebot3c-bringup
-            sudo snap connections turtlebot3c-nav
-            sudo snap connections turtlebot3c-teleop
-
             echo "Set the simulation parameter"
             sudo snap set turtlebot3c-bringup simulation=true
-            snap set turtlebot3c-nav simulation=true
-            sleep 20
+            sudo snap set turtlebot3c-nav simulation=true
+            sleep 10
 
             ## set gui arg to false with sed since the arg is not exposed
             sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
