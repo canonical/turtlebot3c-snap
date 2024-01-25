@@ -48,7 +48,10 @@ jobs:
       - name: test-script
         shell: bash
         run: |
-            check_publishing() {
+            cat << 'EOF' > test-script.sh
+            #!/bin/bash
+
+                       check_publishing() {
                 local name=$1
                 while [ -z "${topic_data}" ]; do
                   echo "waiting for /$name data"
@@ -143,7 +146,6 @@ jobs:
 
             ## test mapping node
             sudo snap start turtlebot3c-nav.mapping
-            sleep 10
             check_existence rostopic map 30
             check_existence rosnode turtlebot3_slam_gmapping 30
             echo "moving the robot"
@@ -158,7 +160,7 @@ jobs:
               sudo bash -c 'cd /root/snap/turtlebot3c-nav/common/map/ && ls | grep -q ".yaml"'
               if [ $? -eq 0 ]; then
                 echo "map found - starting navigation"
-                exit 0
+                break
               fi
               current_time=$(date +%s)
               elapsed_time=$((current_time - start_time))
@@ -176,3 +178,7 @@ jobs:
 
             kill $pid
             sudo snap stop turtlebot3c-bringup
+
+            EOF
+
+            bash test-script.sh
