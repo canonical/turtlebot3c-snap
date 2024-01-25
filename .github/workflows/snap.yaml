@@ -16,7 +16,7 @@ jobs:
       ubuntu-image: ubuntu-20.04
       branch-name: noetic-devel
       snap-name: turtlebot3c
-      snap-install-args: --devmode
+      snap-install-args: --dangerous
       test-script: |
                     #!/bin/bash
 
