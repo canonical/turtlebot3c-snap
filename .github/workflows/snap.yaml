@@ -51,8 +51,11 @@ jobs:
             cat << 'EOF' > test-script.sh
             #!/bin/bash
 
-                       check_publishing() {
+            check_publishing() {
                 local name=$1
+                local timeout=$2
+                local start_time=$(date +%s)
+
                 while [ -z "${topic_data}" ]; do
                   echo "waiting for /$name data"
                   topic_data=$(rostopic echo -n 10 /$name 2>/dev/null)
@@ -61,9 +64,18 @@ jobs:
                   else
                     echo "Topic /$name is publishing data. Exiting."
                   fi
+
+                  local current_time=$(date +%s)
+                  local elapsed_time=$((current_time - start_time))
+                  
+                  if [ $elapsed_time -ge $timeout_seconds ]; then
+                      echo "Error $name is not running."
+                      exit 1
+                  fi
                   sleep 1
                 done
             }
+
 
             check_existence() {
                 local topic_or_node=$1
@@ -137,8 +149,8 @@ jobs:
             pid=$!
 
             echo "check simulation is running"
-            check_publishing scan
-            check_publishing joint_states
+            check_publishing scan 30
+            check_publishing joint_states 30
 
             ## test core robot_state_publisher
             check_existence rostopic tf 30
