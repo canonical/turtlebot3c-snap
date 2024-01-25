@@ -137,22 +137,17 @@ jobs:
             check_publishing scan
             check_publishing joint_states
 
-            echo "check core logs"
-            sudo snap logs turtlebot3c-bringup.core -n 100
-
-
             ## test core robot_state_publisher
             check_existence rostopic tf 30
             check_existence rosnode robot_state_publisher 30
+
             ## test mapping node
             sudo snap start turtlebot3c-nav.mapping
-            sleep 5
-            echo "check mapping logs"
-            sudo snap logs turtlebot3c-nav.mapping -n 200
             check_existence rostopic map 30
             check_existence rosnode turtlebot3_slam_gmapping 30
             echo "moving the robot"
-            timeout 5s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+            rostopic list
+            timeout 10s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
             check_publishing map
             sudo snap stop turtlebot3c-nav.mapping
 
