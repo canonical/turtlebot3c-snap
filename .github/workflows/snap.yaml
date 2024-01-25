@@ -46,8 +46,8 @@ jobs:
         with:
           path: .
       - name: test-script
+        shell: bash
         run: |
-            #!/bin/bash
             check_publishing() {
                 local name=$1
                 while [ -z "${topic_data}" ]; do
