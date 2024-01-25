@@ -48,7 +48,46 @@ jobs:
       - name: test-script
         run: |
             #!/bin/bash
-            set -x
+            
+            check_publishing() {
+                local name=$1
+                while [ -z "${topic_data}" ]; do
+                  echo "waiting for /$name data"
+                  topic_data=$(rostopic echo -n 10 /$name 2>/dev/null)
+                  if [ -z "${topic_data}" ]; then
+                    echo "Topic /$name is not publishing data."
+                  else
+                    echo "Topic /$name is publishing data. Exiting."
+                    echo "$topic_data"
+                  fi
+                  sleep 1
+                done
+            }
+
+            check_existence() {
+                local topic_or_node=$1
+                local name=$2
+                local timeout=$3
+                local start_time=$(date +%s)
+
+                while true; do
+                    $topic_or_node list | grep -q "/$name"
+                    if [ $? -eq 0 ]; then
+                        echo "$name is running."
+                        return 0
+                    fi
+
+                    local current_time=$(date +%s)
+                    local elapsed_time=$((current_time - start_time))
+
+                    if [ $elapsed_time -ge $timeout ]; then
+                        echo "Error $name is not running."
+                        sudo snap stop turtlebot3c
+                        exit 1
+                    fi
+                    sleep 1
+                done
+            }
 
             ## Install ROS
             echo "Installing ROS"
@@ -61,14 +100,6 @@ jobs:
             sudo apt install -q ros-noetic-turtlebot3-gazebo
 
             source /opt/ros/noetic/setup.sh
-
-            ## set gui arg to false
-            sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
-            ## Launch turtlebot simulation
-
-            #echo "launching gazebo sim"
-            TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch debug:=true &
-            pid=$!
 
             echo "installing snaps"
             # # Iterate through each file in the folder
@@ -83,50 +114,43 @@ jobs:
                 cd ..
             done
 
-            check_existence() {
-                local topic_or_node=$1
-                local name=$2
-                local timeout=$3
-                local start_time=$(date +%s)
-                while true; do
-                    $topic_or_node list | grep -q "/$name"
-                    if [ $? -eq 0 ]; then
-                        echo "$name is running."
-                        return 0
-                    fi
-                    local current_time=$(date +%s)
-                    local elapsed_time=$((current_time - start_time))
-                    if [ $elapsed_time -ge $timeout ]; then
-                        echo "Error $name is not running."
-                        sudo snap stop turtlebot3c-bringup
-                        exit 1
-                    fi
-                    sleep 1
-                done
-            }
-
+            echo "Connect snaps to foundational snap"
             sudo snap connect turtlebot3c-bringup:ros-noetic ros-noetic-robot
             sudo snap connect turtlebot3c-nav:ros-noetic ros-noetic-robot
             sudo snap connect turtlebot3c-teleop:ros-noetic ros-noetic-robot
 
+            echo "Set the simulation parameter"
             sudo snap set turtlebot3c-bringup simulation=true
-            sleep 5
-            sudo snap start turtlebot3c-teleop.core
-            sleep 5
+            sleep 10
 
-            # test core robot_state_publisher
+            ## set gui arg to false with sed since the arg is not exposed
+            sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
+
+            ## Launch turtlebot simulation
+            TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch debug:=true &
+            pid=$!
+
+            echo "check simulation is running"
+            check_publishing scan
+            check_publishing joint_states
+
+            sudo snap start turtlebot3c-teleop.core
+            sleep 10
+
+            ## test core robot_state_publisher
+            check_existence rostopic tf 30
             check_existence rosnode robot_state_publisher 30
 
             ## test mapping node
             sudo snap start turtlebot3c-nav.mapping
-            sleep 5
             check_existence rosnode turtlebot3_slam_gmapping 30
             check_existence rostopic map 30
+            echo "moving the robot"
+            timeout 5s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+            check_publishing map
             sudo snap stop turtlebot3c-nav.mapping
 
-            echo "wait for post-stop-command to finish"
-            sleep 20
-
+            ## check map has been created
             timeout=30
             start_time=$(date +%s)
             while true; do
