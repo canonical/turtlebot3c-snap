@@ -48,7 +48,6 @@ jobs:
       - name: test-script
         run: |
             #!/bin/bash
-            set -x
             check_publishing() {
                 local name=$1
                 while [ -z "${topic_data}" ]; do
