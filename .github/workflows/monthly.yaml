@@ -9,3 +9,5 @@ jobs:
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@main
   multi-snap:
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap
+  part2-answer:
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@developer-guide-part2-answer
