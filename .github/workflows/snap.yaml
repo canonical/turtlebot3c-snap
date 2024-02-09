@@ -11,7 +11,7 @@ on:
 
 jobs:
   snap:
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
     with:
       ubuntu-image: ubuntu-20.04
       branch-name: noetic-devel
