@@ -30,7 +30,7 @@ jobs:
       matrix:
         snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
     name: "Snap ${{ matrix.snap-name }}"
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@refactor_split_jobs
     with:
       branch-name: feature/multi-snap
       snap-name: ${{ matrix.snap-name }}
