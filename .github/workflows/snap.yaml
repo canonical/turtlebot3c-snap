@@ -30,19 +30,20 @@ jobs:
       matrix:
         snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
     name: "Snap ${{ matrix.snap-name }}"
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/build-install-test-snap.yaml@main
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
     with:
       branch-name: feature/multi-snap
       snap-name: ${{ matrix.snap-name }}
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
       snap-install-args: --dangerous
       snapcraft-args: --enable-experimental-extensions
+      cleanup: false
 
   test_snaps:
     runs-on: ubuntu-20.04
     needs: build_snaps
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: .
       - name: test-script
