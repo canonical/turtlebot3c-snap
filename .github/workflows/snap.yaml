@@ -37,6 +37,7 @@ jobs:
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
       snap-install-args: --dangerous
       snapcraft-args: --enable-experimental-extensions
+      cleanup: false
 
   test_snaps:
     runs-on: ubuntu-20.04
