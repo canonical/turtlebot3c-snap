@@ -17,6 +17,7 @@ jobs:
       branch-name: noetic-devel
       snap-name: turtlebot3c
       snap-install-args: --dangerous
+      publish: true
       test-script: |
                     #!/bin/bash
 
