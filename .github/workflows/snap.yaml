@@ -37,6 +37,7 @@ jobs:
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
       snap-install-args: --dangerous
       snapcraft-args: --enable-experimental-extensions
+      publish: true
       cleanup: false
 
   test_snaps:
