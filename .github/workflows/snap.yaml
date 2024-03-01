@@ -12,6 +12,8 @@ on:
 jobs:
   snap:
     uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
+    secrets:
+      store-login: ${{ secrets.STORE_LOGIN }}
     with:
       ubuntu-image: ubuntu-20.04
       branch-name: noetic-devel
