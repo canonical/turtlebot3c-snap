@@ -17,7 +17,7 @@ jobs:
       branch-name: test_wf
       snap-name: turtlebot3c
       snap-install-args: --dangerous
-      store-login: ${{ secrets.STORE_LOGIN}}
+      store-login: ${{ secrets.STORE_LOGIN }}
       test-script: |
                     #!/bin/bash
 
