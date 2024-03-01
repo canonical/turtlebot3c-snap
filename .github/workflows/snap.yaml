@@ -12,12 +12,13 @@ on:
 jobs:
   snap:
     uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@dev/snap_store_secret
+    secrets:
+      store-login: ${{ secrets.STORE_LOGIN }}
     with:
       ubuntu-image: ubuntu-20.04
       branch-name: test_wf
       snap-name: turtlebot3c
       snap-install-args: --dangerous
-      store-login: ${{ secrets.STORE_LOGIN }}
       test-script: |
                     #!/bin/bash
 
