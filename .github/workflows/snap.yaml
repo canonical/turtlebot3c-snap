@@ -31,12 +31,15 @@ jobs:
         snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
     name: "Snap ${{ matrix.snap-name }}"
     uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
+    secrets:
+      store-login: ${{ secrets.STORE_LOGIN }}
     with:
       branch-name: feature/multi-snap
       snap-name: ${{ matrix.snap-name }}
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
       snap-install-args: --dangerous
       snapcraft-args: --enable-experimental-extensions
+      publish: true
       cleanup: false
 
   test_snaps:
