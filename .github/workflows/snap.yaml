@@ -131,12 +131,6 @@ jobs:
                 cd ..
             done
 
-            echo "Connect snaps to foundational snap"
-            sudo snap connect turtlebot3c-bringup:ros-noetic ros-noetic-robot
-            sudo snap connect turtlebot3c-nav:ros-noetic ros-noetic-robot
-            sudo snap connect turtlebot3c-teleop:ros-noetic ros-noetic-robot
-            sleep 10
-
             echo "Set the simulation parameter"
             sudo snap set turtlebot3c-bringup simulation=true
             sudo snap set turtlebot3c-nav simulation=true
