@@ -21,7 +21,7 @@ jobs:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
       ubuntu-image: ubuntu-20.04
-      branch-name: ${{ input.branch-name }}
+      branch-name: ${{ inputs.branch-name }}
       snap-name: turtlebot3c
       snap-install-args: --dangerous
       publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_call'}}
