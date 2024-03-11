@@ -34,12 +34,11 @@ jobs:
     secrets:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
-      branch-name: feature/multi-snap
       snap-name: ${{ matrix.snap-name }}
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
       snap-install-args: --dangerous
       snapcraft-args: --enable-experimental-extensions
-      publish: true
+      publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_call'}}
       cleanup: false
 
   test_snaps:
@@ -71,7 +70,7 @@ jobs:
 
                   local current_time=$(date +%s)
                   local elapsed_time=$((current_time - start_time))
-                  
+
                   if [ $elapsed_time -ge $timeout ]; then
                       echo "Error $name is not running."
                       exit 1
@@ -131,11 +130,15 @@ jobs:
                 cd ..
             done
 
-            echo "Connect snaps to foundational snap"
-            sudo snap connect turtlebot3c-bringup:ros-noetic ros-noetic-robot
-            sudo snap connect turtlebot3c-nav:ros-noetic ros-noetic-robot
-            sudo snap connect turtlebot3c-teleop:ros-noetic ros-noetic-robot
-            sleep 10
+            echo "Show snaps connections"
+            snap connections turtlebot3c-bringup
+            snap connections turtlebot3c-nav
+            snap connections turtlebot3c-teleop
+            sleep 2
+
+            echo "Show snaps services"
+            snap services turtlebot3c-bringup
+            sleep 2
 
             echo "Set the simulation parameter"
             sudo snap set turtlebot3c-bringup simulation=true
