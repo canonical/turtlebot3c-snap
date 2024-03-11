@@ -9,5 +9,7 @@ jobs:
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@noetic-devel
   multi-snap:
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap
+    with:
+      branch-name: feature/multi-snap
   part2-answer:
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@developer-guide-part2-answer
