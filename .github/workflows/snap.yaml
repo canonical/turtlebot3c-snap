@@ -38,7 +38,7 @@ jobs:
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
       snap-install-args: --dangerous
       snapcraft-args: --enable-experimental-extensions
-      publish: true
+      publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_call'}}
       cleanup: false
 
   test_snaps:
