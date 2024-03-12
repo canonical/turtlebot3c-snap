@@ -8,12 +8,17 @@ on:
       - developer-guide-part2-answer
   workflow_dispatch:
   workflow_call:
+   inputs:
+      branch-name:
+        required: false
+        type: string
+        default: ''
 
 jobs:
   snap:
     uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
     with:
-      branch-name: developer-guide-part2-answer
+      branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-name: turtlebot3c
       snap-install-args: --devmode
       test-script: |
