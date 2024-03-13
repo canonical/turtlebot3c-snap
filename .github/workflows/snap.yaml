@@ -8,6 +8,11 @@ on:
       - noetic-devel
   workflow_dispatch:
   workflow_call:
+   inputs:
+      branch-name:
+        required: false
+        type: string
+        default: ''
 
 jobs:
   snap:
@@ -16,10 +21,10 @@ jobs:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
       ubuntu-image: ubuntu-20.04
-      branch-name: noetic-devel
+      branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-name: turtlebot3c
       snap-install-args: --dangerous
-      publish: true
+      publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_call'}}
       test-script: |
                     #!/bin/bash
 
