@@ -15,3 +15,5 @@ jobs:
       branch-name: feature/multi-snap
   part2-answer:
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@developer-guide-part2-answer
+    with:
+      branch-name: developer-guide-part2-answer
