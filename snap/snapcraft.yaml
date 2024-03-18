@@ -67,7 +67,7 @@ apps:
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
     command-chain: [usr/bin/ros_network.sh]
-    command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop turtlebot3c_teleop.launch
+    command: roslaunch turtlebot3c_teleop turtlebot3c_teleop.launch
     plugs: [network, network-bind]
     extensions: [ros1-noetic]
 
@@ -75,7 +75,7 @@ apps:
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
     command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_key_vel.sh]
-    command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop key.launch
+    command: roslaunch turtlebot3c_teleop key.launch
     plugs: [network, network-bind]
     extensions: [ros1-noetic]
 
@@ -83,7 +83,7 @@ apps:
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
     command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_joy_vel.sh]
-    command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop joy.launch
+    command: roslaunch turtlebot3c_teleop joy.launch
     plugs: [network, network-bind, joystick]
     extensions: [ros1-noetic]
 

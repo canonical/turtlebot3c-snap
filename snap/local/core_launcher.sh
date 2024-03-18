@@ -7,5 +7,5 @@ TURTLEBOT3_MODEL="$(snapctl get turtlebot3-model)"
 export LDS_MODEL
 export TURTLEBOT3_MODEL
 
-${SNAP}/opt/ros/noetic/bin/roslaunch turtlebot3c_bringup turtlebot3c_bringup.launch simulation:=$SIMULATION
+${SNAP}/roslaunch turtlebot3c_bringup turtlebot3c_bringup.launch simulation:=$SIMULATION
 
