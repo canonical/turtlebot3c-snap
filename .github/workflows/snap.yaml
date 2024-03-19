@@ -9,6 +9,11 @@ on:
       - feature/multi-snap
   workflow_dispatch:
   workflow_call:
+   inputs:
+      branch-name:
+        required: false
+        type: string
+        default: ''
 
 jobs:
 
@@ -34,6 +39,7 @@ jobs:
     secrets:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
+      branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-name: ${{ matrix.snap-name }}
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
       snap-install-args: --dangerous
