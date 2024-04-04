@@ -24,6 +24,8 @@ jobs:
       snap-names: ${{ steps.snap-names.outputs.snap-names }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: '${{ inputs.branch-name }}'
       - id: snap-names
         run: echo "snap-names=$(find . -type f -name 'snapcraft.yaml' | sed -r 's|^\./([^/]+)/snap/snapcraft.yaml|\1|' | sed 's/-snap$//' | sort | uniq | jq --raw-input --slurp --compact-output 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
