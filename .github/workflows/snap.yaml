@@ -24,7 +24,7 @@ jobs:
       branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-name: turtlebot3c
       snap-install-args: --dangerous
-      publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_call'}}
+      publish: ${{ github.event_name == 'push' || inputs.branch-name != '' }}
       test-script: |
                     #!/bin/bash
 
