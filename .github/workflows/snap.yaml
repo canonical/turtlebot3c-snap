@@ -44,9 +44,8 @@ jobs:
       branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-name: ${{ matrix.snap-name }}
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
-      snap-install-args: --dangerous
       snapcraft-args: --enable-experimental-extensions
-      publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_call'}}
+      publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch'}}
       cleanup: false
 
   test_snaps:
