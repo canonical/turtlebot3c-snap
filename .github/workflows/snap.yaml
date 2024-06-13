@@ -36,13 +36,13 @@ jobs:
       fail-fast: false
       matrix:
         snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
-        arch: ['X64', 'ARM64']
-    runs-on: [self-hosted, linux, ${{ matrix.arch }}, medium, noble]
+        arch: [ubuntu-latest, ubuntu-22.04-arm64]
     name: "Snap ${{ matrix.snap-name }}"
     uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
     secrets:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
+      ubuntu-image: ${{ matrix.arch }}
       branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-name: ${{ matrix.snap-name }}
       snapcraft-build-path: ./${{ matrix.snap-name }}-snap
