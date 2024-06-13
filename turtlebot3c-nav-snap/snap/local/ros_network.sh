@@ -2,7 +2,7 @@
 
 ROS_MASTER_HOST="$(snapctl get ros-master-host)"
 
-if [[ -z "${ROS_MASTER_URI}" ]]; then
+if [ "${ROS_MASTER_URI}" == "http://localhost:11311" ]; then
     export ROS_MASTER_URI=http://${ROS_MASTER_HOST}:11311
 fi
 
