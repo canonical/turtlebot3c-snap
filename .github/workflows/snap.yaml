@@ -19,10 +19,7 @@ jobs:
 
   # Collect all relative paths containing a 'snap/snapcraft.yaml'
   collect_snap_names:
-    strategy:
-      matrix:
-        arch: ['X64', 'ARM64']
-    runs-on: [self-hosted, linux, ${{ matrix.arch }}, medium, noble]]
+    runs-on: ubuntu-latest
     outputs:
       snap-names: ${{ steps.snap-names.outputs.snap-names }}
     steps:
@@ -39,6 +36,8 @@ jobs:
       fail-fast: false
       matrix:
         snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
+        arch: ['X64', 'ARM64']
+    runs-on: [self-hosted, linux, ${{ matrix.arch }}, medium, noble]
     name: "Snap ${{ matrix.snap-name }}"
     uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
     secrets:
