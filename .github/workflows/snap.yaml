@@ -19,7 +19,10 @@ jobs:
 
   # Collect all relative paths containing a 'snap/snapcraft.yaml'
   collect_snap_names:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: ['X64', 'ARM64']
+    runs-on: [self-hosted, linux, ${{ matrix.arch }}, medium, noble]]
     outputs:
       snap-names: ${{ steps.snap-names.outputs.snap-names }}
     steps:
