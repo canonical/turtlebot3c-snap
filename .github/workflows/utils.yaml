@@ -66,10 +66,6 @@ jobs:
         run: echo "list_of_params=$input" >> $GITHUB_OUTPUT
         env:
           input: ${{ inputs.ubuntu-image }}
-      - run: echo "Debugging json inputs ${{ fromJSON(inputs.ubuntu-image) }}"
-        env:
-          input: ${{ inputs.ubuntu-image }}
-      - run: echo "Debugging json inputs ${{ fromJSON('["a", "b"]') }}"
   build:
     needs: setup
     runs-on: ${{fromJSON(needs.setup.outputs.list_of_params)}}
@@ -103,7 +99,7 @@ jobs:
         retention-days: 14
   
   test:
-    runs-on: '${{ inputs.ubuntu-image }}'
+    runs-on: ${{fromJSON(needs.setup.outputs.list_of_params)}}
     needs: build
     steps:
       - name: Download snap artifact
