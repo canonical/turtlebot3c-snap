@@ -38,7 +38,7 @@ jobs:
         snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
         arch: ['["self-hosted", "linux", "ARM64", "medium", "noble"]']
     name: "Snap ${{ matrix.snap-name }}"
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@mirko/json_input_test
+    uses: ./.github/workflows/utils.yaml
     secrets:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
