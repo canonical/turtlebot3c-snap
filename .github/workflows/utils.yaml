@@ -1,0 +1,159 @@
+name: utils
+
+on:
+  workflow_call:
+    inputs:
+      ubuntu-image:
+        required: false
+        type: string
+        default: "ubuntu-latest"
+      snapcraft-channel:
+        required: false
+        type: string
+        default: "latest/stable"
+      snap-name:
+        required: true
+        type: string
+      branch-name:
+        required: false
+        type: string
+        default: '${{ github.ref }}'
+      snapcraft-args:
+        required: false
+        type: string
+      snapcraft-build-path:
+        required: false
+        type: string
+        default: "."
+      snap-install-args:
+        required: false
+        type: string
+        default: "--dangerous"
+      enable-experimental-extensions-env:
+        required: false
+        type: boolean
+      test-script:
+        description: "custom script to run some custom snap testing"
+        required: false
+        type: string
+      publish:
+        description: "whether to publish the snap to the store"
+        required: false
+        type: boolean
+        default: false
+      publish-track:
+        description: "Snap Store channel track use for publication"
+        required: false
+        type: string
+        default: latest
+      cleanup:
+        description: "whether to cleanup artifacts"
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      store-login:
+        description: "Snap Store credential exported with snapcraft export-login"
+        required: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      list_of_params: ${{ steps.setVariables.outputs.list_of_params }}
+    steps:
+      - id: setVariables
+        run: echo "list_of_params=$input" >> $GITHUB_OUTPUT
+        env:
+          input: ${{ inputs.ubuntu-image }}
+      - run: echo "Debugging json inputs ${{ fromJSON(inputs.ubuntu-image) }}"
+        env:
+          input: ${{ inputs.ubuntu-image }}
+      - run: echo "Debugging json inputs ${{ fromJSON('["a", "b"]') }}"
+  build:
+    needs: setup
+    runs-on: ${{fromJSON(needs.setup.outputs.list_of_params)}}
+    outputs:
+      snap-file: ${{ steps.build-snap.outputs.snap }}
+      upload-branch-name: ${{ steps.branch-name.outputs.BRANCH_NAME }}
+    steps:
+    - run: echo "Debugging json inputs ${{ inputs.ubuntu-image }},  ${{ fromJSON(inputs.ubuntu-image) }}"
+    - name: Checkout snapcraft.yaml branch
+      uses: actions/checkout@v4
+      with:
+        ref: '${{ inputs.branch-name }}'
+    - name: Build snap
+      uses: snapcore/action-build@v1
+      id: build-snap
+      env:
+        SNAPCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS : '${{ inputs.enable-experimental-extensions-env }}'
+      with:
+        path: ${{ inputs.snapcraft-build-path }}
+        snapcraft-channel: '${{ inputs.snapcraft-channel }}'
+        snapcraft-args: '${{ inputs.snapcraft-args }}'
+    - name: Branch name
+      id: branch-name
+      run: |
+        echo "BRANCH_NAME=$(echo ${{ inputs.branch-name }} | sed "s|\/|\-|g")" >> "$GITHUB_OUTPUT"
+    - name: Upload snap artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.snap-name }}-${{ steps.branch-name.outputs.BRANCH_NAME }}
+        path: ${{ steps.build-snap.outputs.snap }}
+        retention-days: 14
+  
+  test:
+    runs-on: '${{ inputs.ubuntu-image }}'
+    needs: build
+    steps:
+      - name: Download snap artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.snap-name }}-${{needs.build.outputs.upload-branch-name}}
+          path: ${{ inputs.snapcraft-build-path }}
+      - name: Install snap
+        env:
+          SNAPCRAFT_INSTALL_ARGS : '${{ inputs.snap-install-args }}'
+        run: |
+          sudo snap install ${{needs.build.outputs.snap-file}} $SNAPCRAFT_INSTALL_ARGS
+      - name: Snap info
+        run: |
+          snap info ${{ inputs.snap-name }}
+      - name: Run custom test script
+        if: inputs.test-script != ''
+        shell: bash
+        run: |
+          cat > test-script.sh << 'EOF'
+            ${{ inputs.test-script }}
+          EOF
+          bash test-script.sh
+
+  publish:
+    if: inputs.publish == true
+    runs-on: ubuntu-latest
+    needs: [build, test]
+
+    steps:
+    - name: Download snap artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.snap-name }}-${{needs.build.outputs.upload-branch-name}}
+        path: ${{ inputs.snapcraft-build-path }}
+    - name: Publish snap
+      uses: snapcore/action-publish@v1
+      env:
+        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.store-login }}
+      if: env.SNAPCRAFT_STORE_CREDENTIALS
+      with:
+        snap: ${{ needs.build.outputs.snap-file }}
+        release: ${{ inputs.publish-track }}/${{ startsWith(github.ref, 'refs/tags/') && 'candidate' || 'edge'}}
+
+  cleanup:
+    if: ${{ always() && !cancelled() && needs.build.result == 'success' && inputs.cleanup == true }}
+    runs-on: ubuntu-latest
+    needs: [build, publish]
+    steps:
+      - name: Delete artifact
+        uses: geekyeggo/delete-artifact@v4
+        with:
+          name: ${{ inputs.snap-name }}-*
