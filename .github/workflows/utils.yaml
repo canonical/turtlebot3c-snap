@@ -70,6 +70,7 @@ jobs:
     needs: setup
     runs-on: ${{fromJSON(needs.setup.outputs.list_of_params)}}
     outputs:
+      list_of_params: ${{ needs.setup.outputs.list_of_params }}
       snap-file: ${{ steps.build-snap.outputs.snap }}
       upload-branch-name: ${{ steps.branch-name.outputs.BRANCH_NAME }}
     steps:
@@ -99,7 +100,7 @@ jobs:
         retention-days: 14
   
   test:
-    runs-on: ${{fromJSON(needs.setup.outputs.list_of_params)}}
+    runs-on: ${{fromJSON(needs.build.outputs.list_of_params)}}
     needs: build
     steps:
       - name: Download snap artifact
