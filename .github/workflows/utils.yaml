@@ -60,7 +60,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      list_of_params: ${{ steps.setVariables.outputs.list_of_params }}
+      list_of_params: ${{ fromJSON(steps.setVariables.outputs.list_of_params) }}
     steps:
       - id: setVariables
         run: echo "list_of_params=$input" >> $GITHUB_OUTPUT
@@ -68,7 +68,7 @@ jobs:
           input: ${{ inputs.ubuntu-image }}
   build:
     needs: setup
-    runs-on: ${{fromJSON(needs.setup.outputs.list_of_params)}}
+    runs-on: ${{ needs.setup.outputs.list_of_params }}
     outputs:
       list_of_params: ${{ needs.setup.outputs.list_of_params }}
       snap-file: ${{ steps.build-snap.outputs.snap }}
@@ -100,7 +100,7 @@ jobs:
         retention-days: 14
   
   test:
-    runs-on: ${{fromJSON(needs.build.outputs.list_of_params)}}
+    runs-on: ${{ needs.build.outputs.list_of_params }}
     needs: build
     steps:
       - name: Download snap artifact
