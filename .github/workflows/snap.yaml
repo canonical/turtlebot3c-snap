@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
-        arch: ['ubuntu-latest', '["self-hosted", "linux", "ARM64", "large" ]']
+        arch: ['["ubuntu-latest"]', '["self-hosted", "linux", "ARM64", "large" ]']
     name: "Snap ${{ matrix.snap-name }} ${{ matrix.arch }}"
     uses: ./.github/workflows/utils.yaml
     secrets:
