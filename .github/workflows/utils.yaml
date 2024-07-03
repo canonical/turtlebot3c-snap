@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       list-of-params: ${{ steps.setVariables.outputs.list-of-params }}
-      snap-artifact-name: ${{ inputs.snap_name }}-${{ fromJson(steps.setVariables.outputs.list-of-params)[0] }}
+      snap-artifact-name: ${{ inputs.snap-name }}-${{ fromJson(steps.setVariables.outputs.list-of-params)[0] }}
     steps:
       - id: setVariables
         run: echo "list-of-params=$input" >> $GITHUB_OUTPUT
