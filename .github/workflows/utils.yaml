@@ -100,8 +100,8 @@ jobs:
         retention-days: 14
   
   test:
-    runs-on: ${{ fromJSON(needs.build.outputs.list_of_params) }}
-    needs: build
+    runs-on: "${{ fromJSON(needs.build.outputs.list_of_params) }}"
+    needs: [build, setup]
     steps:
       - name: Download snap artifact
         uses: actions/download-artifact@v4
