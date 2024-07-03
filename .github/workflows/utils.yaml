@@ -60,17 +60,17 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      list_of_params: ${{ steps.setVariables.outputs.list_of_params }}
+      list-of-params: ${{ steps.setVariables.outputs.list-of-params }}
+      snap-artifact-name: ${{ inputs.snap_name }}-${{ fromJson(steps.setVariables.outputs.list-of-params)[0] }}
     steps:
       - id: setVariables
-        run: echo "list_of_params=$input" >> $GITHUB_OUTPUT
+        run: echo "list-of-params=$input" >> $GITHUB_OUTPUT
         env:
           input: ${{ inputs.ubuntu-image }}
   build:
     needs: setup
-    runs-on: "${{ fromJSON(needs.setup.outputs.list_of_params) }}"
+    runs-on: "${{ fromJSON(needs.setup.outputs.list-of-params) }}"
     outputs:
-      list_of_params: ${{ needs.setup.outputs.list_of_params }}
       snap-file: ${{ steps.build-snap.outputs.snap }}
       upload-branch-name: ${{ steps.branch-name.outputs.BRANCH_NAME }}
     steps:
@@ -95,18 +95,18 @@ jobs:
     - name: Upload snap artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.snap-name }}-${{ steps.branch-name.outputs.BRANCH_NAME }}
+        name: ${{ needs.setup.outputs.snap-artifact-name }}-${{ steps.branch-name.outputs.BRANCH_NAME }}
         path: ${{ steps.build-snap.outputs.snap }}
         retention-days: 14
   
   test:
-    runs-on: "${{ fromJSON(needs.build.outputs.list_of_params) }}"
+    runs-on: "${{ fromJSON(needs.setup.outputs.list-of-params) }}"
     needs: [build, setup]
     steps:
       - name: Download snap artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.snap-name }}-${{needs.build.outputs.upload-branch-name}}
+          name: ${{ needs.setup.outputs.snap-artifact-name }}-${{needs.build.outputs.upload-branch-name}}
           path: ${{ inputs.snapcraft-build-path }}
       - name: Install snap
         env:
