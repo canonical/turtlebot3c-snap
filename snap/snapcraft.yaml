@@ -25,7 +25,7 @@ description: |
 
 grade: stable
 confinement: strict
-base: core20 # Noetic
+base: core22 # Humble
 
 architectures:
   - build-on: amd64
@@ -33,16 +33,11 @@ architectures:
   - build-on: armhf
 
 parts:
-  workspace:
-    plugin: catkin
-    source: .
-    build-packages: [python3-vcstool]
-    stage-packages:
-      - ros-noetic-rosbash # necessary if we need rosrun
-      - ros-noetic-roslaunch # necessary if we need roslaunch
-    override-pull: |
-      snapcraftctl pull # Here we are going to use the local .rosinstall file
-      vcs import --input turtlebot3c.rosinstall
+  ros-humble-turtlebot:
+    plugin: colcon
+    source: https://github.com/ROBOTIS-GIT/turtlebot3.git
+    source-branch: humble-devel
+    source-subdir: turtlebot3_bringup
 
   # copy local scripts to the snap usr/bin
   local-files:
@@ -60,54 +55,4 @@ apps:
     command-chain: [usr/bin/ros_network.sh]
     command: usr/bin/core_launcher.sh
     plugs: [network, network-bind, raw-usb]
-    extensions: [ros1-noetic]
-
-  teleop:
-    daemon: simple
-    environment:
-      ROS_HOME: $SNAP_USER_DATA/ros
-    command-chain: [usr/bin/ros_network.sh]
-    command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop turtlebot3c_teleop.launch
-    plugs: [network, network-bind]
-    extensions: [ros1-noetic]
-
-  key:
-    environment:
-      ROS_HOME: $SNAP_USER_DATA/ros
-    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_key_vel.sh]
-    command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop key.launch
-    plugs: [network, network-bind]
-    extensions: [ros1-noetic]
-
-  joy:
-    environment:
-      ROS_HOME: $SNAP_USER_DATA/ros
-    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_joy_vel.sh]
-    command: opt/ros/noetic/bin/roslaunch turtlebot3c_teleop joy.launch
-    plugs: [network, network-bind, joystick]
-    extensions: [ros1-noetic]
-
-  mapping:
-    environment:
-      ROS_HOME: $SNAP_USER_DATA/ros
-    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_key_vel.sh]
-    command: usr/bin/mapping_launcher.sh
-    daemon: simple
-    install-mode: disable
-    stop-command: usr/bin/save_map.sh
-    post-stop-command: usr/bin/install_last_map.sh
-    plugs: [network, network-bind]
-    extensions: [ros1-noetic]
-
-  navigation:
-    environment:
-      ROS_HOME: $SNAP_USER_DATA/ros
-      # map server need pulseaudio
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
-    command-chain: [usr/bin/ros_network.sh, usr/bin/mux_select_nav_vel.sh]
-    command: usr/bin/navigation_launcher.sh
-    daemon: simple
-    install-mode: disable
-    plugs: [network, network-bind]
-    extensions: [ros1-noetic]
-
+    extensions: [ros2-humble-ros-base]

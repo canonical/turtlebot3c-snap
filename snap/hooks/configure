@@ -38,7 +38,5 @@ esac
 
 # restart core and teleop on new config
 snapctl stop "$SNAP_INSTANCE_NAME.core"
-snapctl stop "$SNAP_INSTANCE_NAME.teleop"
 
 snapctl start "$SNAP_INSTANCE_NAME.core"
-snapctl start "$SNAP_INSTANCE_NAME.teleop"
