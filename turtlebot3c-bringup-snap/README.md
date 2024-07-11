@@ -21,7 +21,7 @@ it only starts the `robot_state_publisher` since the robot is meant to be spawne
 ## How to install
 
 ```terminal
-sudo snap install turtlebot3c-bringup --channel=noetic/latest
+sudo snap install turtlebot3c-bringup --channel=humble/latest
 ```
 
 ## Real robot setup
@@ -45,14 +45,14 @@ sudo snap set turtlebot3c turtlebot3-model=waffle_pi
 
 ## Simulation setup
 
-First select the simulation mode of `turtlebot3c`:
+First select the simulation mode of `turtlebot3c-bringup`:
 
 ```bash
-sudo snap set turtlebot3c simulation=true
+sudo snap set turtlebot3c-bringup simulation=true
 ```
 
 Then, launch the simulation:
 
 ```bash
-TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch
+TURTLEBOT3_MODEL=waffle_pi ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 ```

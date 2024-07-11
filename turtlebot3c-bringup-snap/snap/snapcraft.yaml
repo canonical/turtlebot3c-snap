@@ -4,28 +4,28 @@ license: GPL-3.0
 summary: Turtlebot3c core snap
 description: |
   This snap automatically spawn a roscore and the core components for the
-  Turtlebot3 (controller, robot_state_publisher etc).
+  Turtlebot3.
 
-  By default, the snap is configured for the 'waffle_pi' Turtlebot3 model.
-  To select another robot model (waffle or burger) run the following,
+  This snap is meant to run on the Turtlebot3 robot or with the simulation
 
-    snap set turtlebot3c-bringup turtlebot3-model=burger
+  By default the snap runs on the robot.
+  To switch to the simulation
 
-  Similarly, the snap is configured to consider the lidar model LDS-01.
-  To select the other lidar for the robot run the following,
+    snap set turtlebot3c simulation=true
 
-    snap set turtlebot3c-bringup lds-model=LDS-02
+  By default the snap used the lidar LDS-01 robot.
+  To select the other lidar for the robot
 
-  This snap is meant to run on the Turtlebot3 robot,
-  but it can also be used with the simulation.
+    snap set turtlebot3c lds-model=LDS-02
 
-  In order to use it with the simulation, issue the following in the terminal,
+  By default the snap runs the waffle_pi Turtlebot3 model.
+  To select another robot model (waffle or burger)
 
-    snap set turtlebot3c-bringup simulation=true
+    snap set turtlebot3c turtlebot3-model=burger
 
 grade: stable
 confinement: strict
-base: core20 # Noetic
+base: core22 # Humble
 
 architectures:
   - build-on: amd64
@@ -33,11 +33,11 @@ architectures:
   - build-on: armhf
 
 parts:
-  workspace:
-    plugin: catkin
-    source: https://github.com/ubuntu-robotics/turtlebot3c.git
-    source-branch: noetic-devel
-    source-subdir: turtlebot3c_bringup
+  turtlebot3c-bringup:
+    plugin: colcon
+    source: https://github.com/ROBOTIS-GIT/turtlebot3.git
+    source-branch: humble-devel
+    source-subdir: turtlebot3_bringup
 
   # copy local scripts to the snap usr/bin
   local-files:
@@ -49,11 +49,9 @@ parts:
 apps:
   core:
     daemon: simple
-    install-mode: disable
     environment:
       ROS_HOME: $SNAP_USER_DATA/ros
-      # LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/blas:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lapack"
     command-chain: [usr/bin/ros_network.sh]
     command: usr/bin/core_launcher.sh
     plugs: [network, network-bind, raw-usb]
-    extensions: [ros1-noetic-robot]
+    extensions: [ros2-humble-ros-base]
