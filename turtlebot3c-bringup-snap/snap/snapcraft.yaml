@@ -6,14 +6,9 @@ description: |
   This snap automatically spawn a roscore and the core components for the
   Turtlebot3.
 
-  This snap is meant to run on the Turtlebot3 robot or with the simulation
+  This snap is meant to run on the Turtlebot3 robot.
 
-  By default the snap runs on the robot.
-  To switch to the simulation
-
-    snap set turtlebot3c simulation=true
-
-  By default the snap used the lidar LDS-01 robot.
+  By default the snap uses the lidar LDS-01 robot.
   To select the other lidar for the robot
 
     snap set turtlebot3c lds-model=LDS-02

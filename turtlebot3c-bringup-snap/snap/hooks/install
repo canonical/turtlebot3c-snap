@@ -1,8 +1,5 @@
 #!/bin/sh -e
 
-# set default configuration values
-snapctl set simulation=false
-
 # set default lidar model for real robot
 snapctl set lds-model=LDS-01
 
