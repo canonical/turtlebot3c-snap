@@ -1,22 +1,22 @@
 name: turtlebot3c-bringup
 version: '0.1'
 license: GPL-3.0
-summary: Turtlebot3c core snap
+summary: TurtleBot3c core snap
 description: |
   This snap automatically spawn a roscore and the core components for the
-  Turtlebot3.
+  TurtleBot3 (controller, robot_state_publisher etc).
 
-  This snap is meant to run on the Turtlebot3 robot.
+  By default, the snap is configured for the 'waffle_pi' TurtleBot3 model.
+  To select another robot model (waffle or burger) run the following,
 
-  By default the snap uses the lidar LDS-01 robot.
-  To select the other lidar for the robot
+    snap set turtlebot3c-bringup turtlebot3-model=burger
 
-    snap set turtlebot3c lds-model=LDS-02
+  Similarly, the snap is configured to consider the lidar model LDS-01.
+  To select the other lidar for the robot run the following,
 
-  By default the snap runs the waffle_pi Turtlebot3 model.
-  To select another robot model (waffle or burger)
+    snap set turtlebot3c-bringup lds-model=LDS-02
 
-    snap set turtlebot3c turtlebot3-model=burger
+  This snap is meant to run on the TurtleBot3 robot.
 
 grade: stable
 confinement: strict

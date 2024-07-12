@@ -2,10 +2,10 @@ name: snap
 on:
   push:
     branches:
-      - giuseppe/turtlebot-bringup-humble-devel
+      - feature/multi-snap-humble
   pull_request:
     branches:
-      - giuseppe/turtlebot-bringup-humble-devel
+      - feature/multi-snap-humble
   workflow_dispatch:
   workflow_call:
    inputs:
@@ -26,4 +26,3 @@ jobs:
       snapcraft-args: --enable-experimental-extensions
       snap-name: turtlebot3c-bringup
       publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
-
