@@ -1,18 +1,16 @@
 #!/bin/sh -e
 
-# set default configuration values
-snapctl set simulation=false
-
 # set default lidar model for real robot
 snapctl set lds-model=LDS-01
 
 # set default turtlebot 3 model
 snapctl set turtlebot3-model=waffle_pi
 
-# set default ROS master hostname
-snapctl set ros-master-host=$(hostname).local
+# set default ROS localhost only and ros-domain-id
+snapctl set ros-localhost-only=0
+snapctl set ros-domain-id=0
 
-if ! snapctl is-connected ros-noetic-robot; then
-  logger -t ${SNAP_NAME} "Plug 'ros-noetic-robot' isn't connected, \
-    please run: snap connect ${SNAP_NAME}:ros-noetic-robot <providing-snap>"
+if ! snapctl is-connected ros-humble; then
+  logger -t ${SNAP_NAME} "Plug 'ros-humble' isn't connected, \
+    please run: snap connect ${SNAP_NAME}:ros-humble <providing-snap>"
 fi

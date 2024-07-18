@@ -12,8 +12,7 @@ It starts the motor controller, advertises the sensors,
 upload the robot model to the rosparam server and publishes the robot tf tree.
 In other words, the robot is simply ready to be used at boot.
 
-In case the simulation is used,
-it only starts the `robot_state_publisher` since the robot is meant to be spawned by the simulation.
+This snap is meant to run on the Turtlebot3 robot.
 
 - See the [Turtlebot3 website](http://emanual.robotis.com/docs/en/platform/turtlebot3/overview/).
 - See the [turtlebot3c repo](https://github.com/canonical/turtlebot3c).
@@ -21,7 +20,7 @@ it only starts the `robot_state_publisher` since the robot is meant to be spawne
 ## How to install
 
 ```terminal
-sudo snap install turtlebot3c-bringup --channel=noetic/latest
+sudo snap install turtlebot3c-bringup --channel=humble/latest
 ```
 
 ## Real robot setup
@@ -41,18 +40,4 @@ The model can change with the help of:
 
 ```bash
 sudo snap set turtlebot3c turtlebot3-model=waffle_pi
-```
-
-## Simulation setup
-
-First select the simulation mode of `turtlebot3c`:
-
-```bash
-sudo snap set turtlebot3c simulation=true
-```
-
-Then, launch the simulation:
-
-```bash
-TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_world.launch
 ```
