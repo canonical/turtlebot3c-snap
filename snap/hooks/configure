@@ -36,6 +36,26 @@ case "$TURTLEBOT3_MODEL" in
 		;;
 esac
 
+
+OPENCR_PORT=$(snapctl get opencr-port)
+if [[ "$OPENCR_PORT" =~ ^"/dev/tty" ]]; then
+  logger -t ${SNAP_NAME} "opencr-port is now set to ${OPENCR_PORT}."
+else
+  logger -t ${SNAP_NAME} "${OPENCR_PORT} is not a supported value for opencr-port."\
+      "Possible values are starting with /dev/tty."
+fi
+
+OPENCR_AUTO_UPDATE="$(snapctl get opencr-auto-update)"
+case "$OPENCR_AUTO_UPDATE" in
+	"true") ;;
+	"false") ;;
+	*)
+		logger -t ${SNAP_NAME} "'$OPENCR_AUTO_UPDATE' is not a supported value for opencr-auto-update." \
+      "Possible values are true or false."
+		return 1
+		;;
+esac
+
 # restart core and teleop on new config
 snapctl stop "$SNAP_INSTANCE_NAME.core"
 snapctl stop "$SNAP_INSTANCE_NAME.teleop"

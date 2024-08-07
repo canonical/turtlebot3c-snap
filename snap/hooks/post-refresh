@@ -1,0 +1,16 @@
+#!/bin/sh
+
+auto-update=$(snapctl get opencr-auto-update)
+if [[ "$auto-update" == "false" ]]; then
+  logger -t "$SNAP_NAME" "OpenCR auto update is disabled. Skipping the update."
+  exit 0
+fi
+
+output=$($SNAP/bin/update_firmware.sh 2>&1)
+if [[ $? -eq 0 ]]; then
+  logger -t "$SNAP_NAME" "OpenCR auto update succeeded: $output"
+  snapctl set-health okay
+else
+  snapctl set-health error "OpenCR auto update failed: $output"
+fi
+
