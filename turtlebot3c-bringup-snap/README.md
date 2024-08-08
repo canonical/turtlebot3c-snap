@@ -20,7 +20,7 @@ This snap is meant to run on the Turtlebot3 robot.
 ## How to install
 
 ```terminal
-sudo snap install turtlebot3c-bringup --channel=humble/latest
+sudo snap install turtlebot3c-bringup --channel=jazzy/latest
 ```
 
 ## Real robot setup
