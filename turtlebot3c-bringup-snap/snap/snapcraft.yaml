@@ -20,19 +20,26 @@ description: |
 
 grade: stable
 confinement: strict
-base: core22 # Humble
+base: core24 # Jazzy
 
-architectures:
-  - build-on: amd64
-  - build-on: arm64
-  - build-on: armhf
+platforms:
+  amd64:
+  arm64:
+  armhf:
 
 parts:
   turtlebot3c-bringup:
     plugin: colcon
-    source: https://github.com/ROBOTIS-GIT/turtlebot3.git
-    source-branch: humble-devel
-    source-subdir: turtlebot3_bringup
+    source: .
+    override-pull: |
+      git init
+      # Humble-devel compiles on jazzy. Using source packages to build bringup package
+      # since those are not yet available in jazzy.
+      git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
+      cd turtlebot3 && git sparse-checkout set turtlebot3_bringup/ turtlebot3_description/ turtlebot3_node/
+      craftctl default
+    build-packages:
+      - git
 
   # copy local scripts to the snap usr/bin
   local-files:
@@ -49,4 +56,4 @@ apps:
     command-chain: [usr/bin/ros_network.sh]
     command: usr/bin/core_launcher.sh
     plugs: [network, network-bind, raw-usb]
-    extensions: [ros2-humble-ros-base]
+    extensions: [ros2-jazzy-ros-base]
