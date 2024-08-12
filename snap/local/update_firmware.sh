@@ -11,7 +11,7 @@ OPENCR_PORT=$(snapctl get opencr-port)
 echo "OpenCR port is: ${OPENCR_PORT}"
 
 OPENCR_MODEL=$(snapctl get turtlebot3-model)
-if [[ "$OPENCR_MODEL" == "waffle_pi" ]]; then
+if [ "$OPENCR_MODEL" = "waffle_pi" ]; then
   OPENCR_MODEL="waffle"
 fi
 echo "OpenCR model is: ${OPENCR_MODEL}"

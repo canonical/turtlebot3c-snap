@@ -1,5 +1,7 @@
 #!/bin/sh -e
 
+logger -t ${SNAP_NAME} "Configure hook starting."
+
 SIMULATION="$(snapctl get simulation)"
 case "$SIMULATION" in
 	"true") ;;
@@ -7,7 +9,7 @@ case "$SIMULATION" in
 	"0") ;;
 	"1") ;;
 	*)
-		>&2 echo "'$SIMULATION' is not a supported value for simulation." \
+		logger -t ${SNAP_NAME} "'$SIMULATION' is not a supported value for simulation." \
       "Possible values are true, false, 0, 1"
 		return 1
 		;;
@@ -18,7 +20,7 @@ case "$LDS_MODEL" in
 	"LDS-01") ;;
 	"LDS-02") ;;
 	*)
-		>&2 echo "'$LDS_MODEL' is not a supported value for lds_model." \
+		logger -t ${SNAP_NAME} "'$LDS_MODEL' is not a supported value for lds_model." \
       "Possible values are LDS-01 and LDS-02"
 		return 1
 		;;
@@ -30,7 +32,7 @@ case "$TURTLEBOT3_MODEL" in
 	"waffle") ;;
 	"waffle_pi") ;;
 	*)
-		>&2 echo "'$TURTLEBOT3_MODEL' is not a supported value for turtlebot3-model." \
+		logger -t ${SNAP_NAME} "'$TURTLEBOT3_MODEL' is not a supported value for turtlebot3-model." \
       "Possible values are burger, waffle and waffle_pi"
 		return 1
 		;;
@@ -38,7 +40,7 @@ esac
 
 
 OPENCR_PORT=$(snapctl get opencr-port)
-if [[ "$OPENCR_PORT" =~ ^"/dev/tty" ]]; then
+if echo "$OPENCR_PORT" | grep -q ^/dev/tty; then
   logger -t ${SNAP_NAME} "opencr-port is now set to ${OPENCR_PORT}."
 else
   logger -t ${SNAP_NAME} "${OPENCR_PORT} is not a supported value for opencr-port."\
