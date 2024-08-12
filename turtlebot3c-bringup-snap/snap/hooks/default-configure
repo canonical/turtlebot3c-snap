@@ -1,0 +1,5 @@
+#!/bin/sh
+
+logger -t $SNAP_NAME "default-configure hook starting."
+$SNAP/snap/hooks/post-refresh
+

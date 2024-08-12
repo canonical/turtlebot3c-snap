@@ -16,3 +16,7 @@ if ! snapctl is-connected ros-noetic-robot; then
   logger -t ${SNAP_NAME} "Plug 'ros-noetic-robot' isn't connected, \
     please run: snap connect ${SNAP_NAME}:ros-noetic-robot <providing-snap>"
 fi
+
+# set default OpenCR firmware auto update
+snapctl set opencr-auto-update=false
+
