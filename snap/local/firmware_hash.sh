@@ -1,8 +1,24 @@
 #!/bin/sh
 
+hash_file() {
+  sha256sum "$1" | awk '{print $1}'
+}
+
+hash_directory() {
+  local dir="$1"
+  local hash=""
+
+  find "$dir" -type f -print0 | while IFS= read -r -d '' file; do
+    file_hash=$(hash_file "$file")
+    hash="$hash$file_hash"
+  done
+
+  # Calculate final hash of concatenated file hashes
+  echo "$hash" | sha256sum | awk '{print $1}'
+}
+
 hash_firmware_directory() {
-  local dir="$SNAP/opencr"
-  tar cf - "$dir" | sha256sum | awk '{print $1}'
+  hash_directory "$SNAP/opencr"
 }
 
 write_firmware_hash() {
