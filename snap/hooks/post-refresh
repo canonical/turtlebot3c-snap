@@ -8,9 +8,16 @@ if [ "$auto_update" = "false" ]; then
   exit 0
 fi
 
+. "$SNAP/usr/bin/firmware_hash.sh"
+if [ is_hash_the_same -eq 0 ]; then
+  logger -t $SNAP_NAME "OpenCR hashes are found to be the same. Skipping the update."
+  exit 0
+fi
+
 output=$($SNAP/usr/bin/update_firmware.sh 2>&1)
 if [ $? -eq 0 ]; then
   logger -t $SNAP_NAME "OpenCR auto update succeeded: $output"
+  write_firmware_hash
 else
   logger -t $SNAP_NAME "OpenCR auto update failed: $output"
 fi
