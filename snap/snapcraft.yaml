@@ -45,6 +45,8 @@ architectures:
 hooks:
   post-refresh:
     plugs: [raw-usb]
+  default-configure:
+    plugs: [raw-usb]
 
 parts:
   workspace:
