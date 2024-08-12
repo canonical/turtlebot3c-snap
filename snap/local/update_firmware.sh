@@ -17,5 +17,11 @@ fi
 echo "OpenCR model is: ${OPENCR_MODEL}"
 
 cd $SNAP/opencr
-./update.sh "$OPENCR_PORT" "./$OPENCR_MODEL.opencr"
+# The script always returns zero even in case of an error
+./update.sh "$OPENCR_PORT" "./$OPENCR_MODEL.opencr" | grep -q "Fail"
+if [ $? -eq 0 ]; then
+  return 1
+fi
+
+return 0
 
