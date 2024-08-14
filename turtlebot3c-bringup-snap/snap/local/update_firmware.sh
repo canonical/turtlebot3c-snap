@@ -3,7 +3,7 @@
 arch=$(uname -m)
 
 if [ "${arch}" = "x86_64" ]; then
-  echo "System is AMD64, only ARM devices can update the firmware."
+  echo "System arch is ${arch}. At the moment, only ARM devices can update the firmware."
   exit 1
 fi
 
