@@ -10,7 +10,7 @@ fi
 
 . "${SNAP}/usr/bin/firmware_hash.sh"
 
-if is_hash_the_same; then
+if is_same_hash; then
   logger -t "${SNAP_NAME}" "OpenCR hashes are found to be the same. Skipping the update."
   exit 0
 fi
