@@ -28,11 +28,6 @@ description: |
 
     snap set turtlebot3c opencr-auto-update=true
 
-  By default the snap uses /dev/ttyACM0 port to update the OpenCR board.
-  To select another port
-
-    snap set turtlebot3c opencr-port=/dev/ttyACM1
-
 grade: stable
 confinement: strict
 base: core20 # Noetic

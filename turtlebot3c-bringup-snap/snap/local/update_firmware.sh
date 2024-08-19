@@ -7,7 +7,7 @@ if [ "${arch}" = "x86_64" ]; then
   exit 1
 fi
 
-OPENCR_PORT=$(snapctl get opencr-port)
+OPENCR_PORT="/dev/ttyACM0"
 echo "OpenCR port is: ${OPENCR_PORT}"
 
 OPENCR_MODEL=$(snapctl get turtlebot3-model)

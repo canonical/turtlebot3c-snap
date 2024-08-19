@@ -36,14 +36,6 @@ case "${TURTLEBOT3_MODEL}" in
 		;;
 esac
 
-OPENCR_PORT=$(snapctl get opencr-port)
-if echo "${OPENCR_PORT}" | grep -q ^/dev/tty; then
-  logger -t "${SNAP_NAME}" "opencr-port is now set to ${OPENCR_PORT}."
-else
-  logger -t "${SNAP_NAME}" "${OPENCR_PORT} is not a supported value for opencr-port."\
-      "Possible values are starting with /dev/tty."
-fi
-
 OPENCR_AUTO_UPDATE="$(snapctl get opencr-auto-update)"
 case "${OPENCR_AUTO_UPDATE}" in
 	"true") ;;
