@@ -23,6 +23,11 @@ description: |
 
     snap set turtlebot3c-bringup simulation=true
 
+  By default the snap doesn't run auto update on the OpenCR board.
+  To select auto update
+
+    snap set turtlebot3c opencr-auto-update=true
+
 grade: stable
 confinement: strict
 base: core20 # Noetic
@@ -31,6 +36,12 @@ architectures:
   - build-on: amd64
   - build-on: arm64
   - build-on: armhf
+
+hooks:
+  post-refresh:
+    plugs: [raw-usb]
+  default-configure:
+    plugs: [raw-usb]
 
 parts:
   workspace:
@@ -46,6 +57,16 @@ parts:
     organize:
       '*.sh': usr/bin/
 
+  opencr-binaries:
+    plugin: dump
+    source: https://github.com/ROBOTIS-GIT/OpenCR-Binaries/raw/master/turtlebot3/ROS1/latest/opencr_update.tar.bz2
+    source-type: tar
+    organize:
+      '*' : opencr/
+    stage-packages:
+      - to [arm64,armhf]:
+        - libc6:armhf
+
 apps:
   core:
     daemon: simple
@@ -57,3 +78,7 @@ apps:
     command: usr/bin/core_launcher.sh
     plugs: [network, network-bind, raw-usb]
     extensions: [ros1-noetic-robot]
+
+  opencr-update:
+    command: usr/bin/update_firmware.sh
+    plugs: [raw-usb]

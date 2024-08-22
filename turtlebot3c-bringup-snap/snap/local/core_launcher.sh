@@ -12,4 +12,4 @@ if [[ -z "${TURTLEBOT3_SIMULATION}" ]]; then
     TURTLEBOT3_SIMULATION="$(snapctl get simulation)"
 fi
 
-$SNAP/roslaunch turtlebot3c_bringup turtlebot3c_bringup.launch simulation:=$TURTLEBOT3_SIMULATION
+${SNAP}/roslaunch turtlebot3c_bringup turtlebot3c_bringup.launch simulation:="${TURTLEBOT3_SIMULATION}"
