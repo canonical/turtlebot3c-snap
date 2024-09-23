@@ -37,7 +37,7 @@ jobs:
       matrix:
         snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
         #arch: ['["self-hosted", "linux", "ARM64", "large", "noble"]']
-        arch: ubuntu-latest
+        arch: [ubuntu-latest]
     name: "Snap ${{ matrix.snap-name }}"
     uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
     secrets:
