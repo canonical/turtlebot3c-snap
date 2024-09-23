@@ -39,7 +39,7 @@ jobs:
         #arch: ['["self-hosted", "linux", "ARM64", "large", "noble"]']
         arch: ['ubuntu-latest', '["self-hosted", "linux", "ARM64", "large", "noble"]']
     name: "Snap ${{ matrix.snap-name }}"
-    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
+    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@fix/json_input
     secrets:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
