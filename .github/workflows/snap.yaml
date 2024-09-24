@@ -16,7 +16,7 @@ on:
 
 jobs:
   snap:
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
+    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
     secrets:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
