@@ -20,11 +20,12 @@ jobs:
       fail-fast: false
       matrix:
         arch: ['["ubuntu-latest"]', '["ARM64", "self-hosted", "linux", "large", "noble"]']
-    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
+    uses: canonical/robotics-actions-workflows/.github/workflows/snap-lxc.yaml@main
     secrets:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
       ubuntu-image: ${{ matrix.arch }}
+      lxc-image: "ubuntu:20.04"
       branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-name: turtlebot3c
       publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
