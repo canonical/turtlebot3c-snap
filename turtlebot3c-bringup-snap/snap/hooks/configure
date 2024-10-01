@@ -1,5 +1,18 @@
 #!/bin/sh -e
 
+SIMULATION="$(snapctl get simulation)"
+case "$SIMULATION" in
+	"true") ;;
+	"false") ;;
+	"0") ;;
+	"1") ;;
+	*)
+		>&2 echo "'$SIMULATION' is not a supported value for simulation." \
+      "Possible values are true, false, 0, 1"
+		return 1
+		;;
+esac
+
 LDS_MODEL="$(snapctl get lds-model)"
 case "$LDS_MODEL" in
 	"LDS-01") ;;
