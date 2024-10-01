@@ -14,6 +14,6 @@ case ${SIMULATION} in
     ros2 launch turtlebot3_bringup robot.launch.py
     ;;
   true|1)
-    ros2 launch turtlebot3_bringup turtlebot3_state_publisher.launch.py simulation:="${SIMULATION}"
+    ros2 launch turtlebot3_bringup turtlebot3_state_publisher.launch.py use_sim_time:="${SIMULATION}"
     ;;
 esac
