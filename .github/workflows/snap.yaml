@@ -16,11 +16,16 @@ on:
 
 jobs:
   snap:
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ['["ubuntu-latest"]', '["ARM64", "self-hosted", "linux", "large", "noble"]']
+    uses: canonical/robotics-actions-workflows/.github/workflows/snap-lxc.yaml@main
     secrets:
       store-login: ${{ secrets.STORE_LOGIN }}
     with:
-      ubuntu-image: ubuntu-20.04
+      ubuntu-image: ${{ matrix.runner }}
+      lxc-image: "ubuntu:20.04"
       branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-name: turtlebot3c
       publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
@@ -89,11 +94,11 @@ jobs:
                     ## Install ROS
                     sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 
-                    sudo apt install curl
+                    sudo apt install --yes curl
                     curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
                     sudo apt update
-                    sudo apt install ros-noetic-desktop-full
-                    sudo apt install ros-noetic-turtlebot3-gazebo
+                    sudo apt install --yes ros-noetic-desktop-full
+                    sudo apt install --yes ros-noetic-turtlebot3-gazebo
 
                     source /opt/ros/noetic/setup.sh
 
@@ -105,6 +110,7 @@ jobs:
                     sudo sed -i "s/\(<arg name=\"gui\" value=\"\).*\(\"\/>\)/\1false\2/" /opt/ros/noetic/share/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
 
                     ## Launch turtlebot simulation
+
                     TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch &
                     pid=$!
 
@@ -114,11 +120,11 @@ jobs:
 
                     ## test core robot_state_publisher
                     check_existence rostopic tf 30
-                    check_existence rosnode robot_state_publisher 30
+                    check_existence rosnode robot_state_publisher 300
 
                     ## test mapping node
                     sudo snap start turtlebot3c.mapping
-                    check_existence rosnode turtlebot3_slam_gmapping 30
+                    check_existence rosnode turtlebot3_slam_gmapping 300
                     check_existence rostopic map 30
                     echo "moving the robot"
                     timeout 5s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]' || true
@@ -126,7 +132,7 @@ jobs:
                     sudo snap stop turtlebot3c.mapping
                     
                     ## check map has been created
-                    timeout=30
+                    timeout=300
                     start_time=$(date +%s)
                     while true; do
                         echo "check map exists.."
@@ -146,7 +152,7 @@ jobs:
 
                     ## test navigation node
                     sudo snap start turtlebot3c.navigation
-                    check_existence rosnode move_base 30
+                    check_existence rosnode move_base 300
                     check_existence rostopic nav_vel 30
                     sudo snap stop turtlebot3c.navigation
 
