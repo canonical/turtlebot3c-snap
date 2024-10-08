@@ -57,9 +57,10 @@ parts:
 
       #rosdep install --from-path "${CRAFT_PART_SRC_WORK}/nav2_minimal_tb3_sim" -y -i
 
-      xacro -o "${CRAFT_PART_BUILD}/xacro/model.sdf" "${CRAFT_PART_SRC_WORK}/nav2_minimal_tb3_sim/urdf/gz_waffle.sdf.xacro"
+      xacro "${CRAFT_PART_SRC_WORK}/nav2_minimal_tb3_sim/urdf/gz_waffle.sdf.xacro" \
+        -o "${CRAFT_PART_BUILD}/xacro/model.sdf"
 
-      mkdir -p "${CRAFT_STAGE}/model"
+      mkdir -p "${CRAFT_PART_INSTALL}/model"
 
       ${CRAFT_STAGE}/bin/urdf-packager "${CRAFT_PART_BUILD}/xacro/model.sdf" \
-        -p "${CRAFT_PART_SRC_WORK}" -o "${CRAFT_STAGE}/model"
+        -p "${CRAFT_PART_SRC_WORK}" -o "${CRAFT_PART_INSTALL}/model"
