@@ -27,3 +27,15 @@ jobs:
       snap-name: turtlebot3c-bringup
       publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
       publish-track: humble
+
+  model-snap:
+    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
+    secrets:
+      store-login: ${{ secrets.STORE_LOGIN }}
+    with:
+      ubuntu-image: ubuntu-22.04
+      branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
+      snapcraft-build-path: ./turtlebot3c-model-snap
+      snap-name: turtlebot3c-model
+      publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+      publish-track: humble
