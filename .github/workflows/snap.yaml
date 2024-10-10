@@ -38,4 +38,3 @@ jobs:
       snapcraft-build-path: ./turtlebot3c-model-snap
       snap-name: turtlebot3c-model
       publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
-      publish-track: humble
