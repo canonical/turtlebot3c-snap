@@ -1,0 +1,66 @@
+name: turtlebot3c-model
+version: '0.1'
+license: GPL-3.0
+summary: The TurtleBot3c simulation model as a snap
+description: |
+  This snap packages the robot simulation model as a self contained archive.
+  It is meant to be consumed through content-sharing.
+
+grade: stable
+confinement: strict
+base: core22 # Humble
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: armhf
+
+slots:
+  model:
+    interface: content
+    content: model
+    source:
+      read:
+        - $SNAP/model
+
+package-repositories:
+  - components: [main]
+    formats: [deb]
+    key-id: C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+    key-server: keyserver.ubuntu.com
+    suites: [jammy]
+    type: apt
+    url: http://repo.ros2.org/ubuntu/main
+
+parts:
+  urdf-packager:
+    plugin: python
+    source: https://github.com/ubuntu-robotics/urdf-packager.git
+    source-branch: feat/initial-upload
+    override-prime: echo "prime nothing"
+
+  turtlebot3c-model:
+    after: [urdf-packager]
+    plugin: nil
+    source: https://github.com/ros-navigation/nav2_minimal_turtlebot_simulation.git
+    build-packages:
+      - python3-rosdep
+      - ros-humble-xacro
+    override-build: |
+      craftctl default
+
+      mkdir -p "${CRAFT_PART_BUILD}/xacro"
+
+      set +u
+      source /opt/ros/humble/setup.bash
+      set -u
+
+      #rosdep install --from-path "${CRAFT_PART_SRC_WORK}/nav2_minimal_tb3_sim" -y -i
+
+      xacro "${CRAFT_PART_SRC_WORK}/nav2_minimal_tb3_sim/urdf/gz_waffle.sdf.xacro" \
+        -o "${CRAFT_PART_BUILD}/xacro/model.sdf"
+
+      mkdir -p "${CRAFT_PART_INSTALL}/model"
+
+      ${CRAFT_STAGE}/bin/urdf-packager "${CRAFT_PART_BUILD}/xacro/model.sdf" \
+        -p "${CRAFT_PART_SRC_WORK}" -o "${CRAFT_PART_INSTALL}/model"
