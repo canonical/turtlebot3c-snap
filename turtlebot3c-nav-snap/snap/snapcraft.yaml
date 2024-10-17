@@ -35,7 +35,7 @@ architectures:
 parts:
   workspace:
     plugin: catkin
-    source: https://github.com/ubuntu-robotics/turtlebot3c.git
+    source: https://github.com/canonical/turtlebot3c.git
     source-branch: noetic-devel
     source-subdir: turtlebot3c_2dnav
 
@@ -54,6 +54,7 @@ apps:
     command: usr/bin/mapping_launcher.sh
     daemon: simple
     install-mode: disable
+    stop-timeout: 300s
     stop-command: usr/bin/save_map.sh
     post-stop-command: usr/bin/install_last_map.sh
     plugs: [network, network-bind]

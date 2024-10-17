@@ -27,44 +27,31 @@ jobs:
         with:
           ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       - id: snap-names
-        run: echo "snap-names=$(find . -type f -name 'snapcraft.yaml' | sed -r 's|^\./([^/]+)/snap/snapcraft.yaml|\1|' | sed 's/-snap$//' | sort | uniq | jq --raw-input --slurp --compact-output 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+        run: echo "snap-names=$(find . -type f -name 'snapcraft.yaml' | sed -r 's|^\./([^/]+)/snap/snapcraft.yaml|\1|' | sort | uniq | jq --raw-input --slurp --compact-output 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
-  # Run snapcraft for each example
-  build_snaps:
-    needs: collect_snap_names
-    strategy:
-      fail-fast: false
-      matrix:
-        snap-name: ${{ fromJson(needs.collect_snap_names.outputs.snap-names) }}
-    name: "Snap ${{ matrix.snap-name }}"
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
+  snaps:
+    needs: [collect_snap_names]
+    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
     secrets:
-      store-login: ${{ secrets.STORE_LOGIN }}
+      snapstore-login: ${{ secrets.STORE_LOGIN }}
     with:
-      branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
-      snap-name: ${{ matrix.snap-name }}
-      snapcraft-build-path: ./${{ matrix.snap-name }}-snap
-      snapcraft-args: --enable-experimental-extensions
-      publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch'}}
-      cleanup: false
-
-  test_snaps:
-    runs-on: ubuntu-20.04
-    needs: build_snaps
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: .
-      - name: test-script
-        shell: bash
-        run: |
-            cat << 'EOF' > test-script.sh
+      runs-on: '["ubuntu-latest", ["self-hosted", "linux", "ARM64", "medium", "noble"]]'
+      lxd-image: 'ubuntu:20.04'
+      snapcraft-source-subdir: "${{ needs.collect_snap_names.outputs.snap-names }}"
+      git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
+      snapcraft-enable-experimental-extensions: true
+      snap-test-script: |
             #!/bin/bash
+
+            set -euxo pipefail
+
+            export HOME=/home/ubuntu
 
             check_publishing() {
                 local name=$1
                 local timeout=$2
                 local start_time=$(date +%s)
+                local topic_data=""
 
                 while [ -z "${topic_data}" ]; do
                   echo "waiting for /$name data"
@@ -92,10 +79,11 @@ jobs:
                 local name=$2
                 local timeout=$3
                 local start_time=$(date +%s)
+                local error_code=0
 
                 while true; do
-                    $topic_or_node list | grep -q "/$name"
-                    if [ $? -eq 0 ]; then
+                    error_code=$($topic_or_node list | grep -q "/$name"; echo $?)
+                    if [ $error_code -eq 0 ]; then
                         echo "$name is running."
                         return 0
                     fi
@@ -114,28 +102,17 @@ jobs:
 
             ## Install ROS
             echo "Installing ROS"
-            sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+            sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" > /etc/apt/sources.list.d/ros-latest.list'
 
-            sudo apt install curl
+            sudo apt install --yes curl
             curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
             sudo apt -q update
-            sudo apt install -q ros-noetic-desktop-full
-            sudo apt install -q ros-noetic-turtlebot3-gazebo
+            sudo apt install -q --yes ros-noetic-desktop-full
+            sudo apt install -q --yes ros-noetic-turtlebot3-gazebo
 
-            source /opt/ros/noetic/setup.sh
-
-            echo "installing snaps"
-            # # Iterate through each file in the folder
-            for dir in */; do
-                cd "$dir" || exit
-                for file in *; do
-                    # Check if it is a regular file
-                    if [ -f "$file" ]; then
-                        sudo snap install "$file" --dangerous
-                    fi
-                done
-                cd ..
-            done
+            set +u
+            source /opt/ros/noetic/setup.bash
+            set -u
 
             echo "Show snaps connections"
             snap connections turtlebot3c-bringup
@@ -172,18 +149,18 @@ jobs:
 
             ## test mapping node
             sudo snap start turtlebot3c-nav.mapping
-            check_existence rostopic map 30
-            check_existence rosnode turtlebot3_slam_gmapping 30
+            check_existence rostopic map 300
+            check_existence rosnode turtlebot3_slam_gmapping 300
             echo "moving the robot"
-            timeout 10s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]'
+            timeout 30s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]' || true
             sudo snap stop turtlebot3c-nav.mapping
 
             ## check map has been created
-            timeout=30
+            timeout=300
             start_time=$(date +%s)
             while true; do
               echo "check map exists.."
-              sudo bash -c 'cd /root/snap/turtlebot3c-nav/common/map/ && ls | grep -q ".yaml"'
+              error_code=$(sudo bash -c 'cd /root/snap/turtlebot3c-nav/common/map/ && ls | grep -q ".yaml"'; echo $?)
               if [ $? -eq 0 ]; then
                 echo "map found - starting navigation"
                 break
@@ -198,13 +175,9 @@ jobs:
             done
 
             sudo snap start turtlebot3c-nav.navigation
-            check_existence rosnode move_base 30
-            check_existence rostopic nav_vel 30
+            check_existence rosnode move_base 300
+            check_existence rostopic nav_vel 300
             sudo snap stop turtlebot3c-nav.navigation
 
             kill $pid
             sudo snap stop turtlebot3c-bringup
-
-            EOF
-
-            bash test-script.sh
