@@ -31,7 +31,7 @@ jobs:
 
   snaps:
     needs: [collect_snap_names]
-    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@fix/refactor-matrix
+    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
     secrets:
       snapstore-login: ${{ secrets.STORE_LOGIN }}
     with:
