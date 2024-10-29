@@ -21,7 +21,7 @@ jobs:
       snapstore-login: ${{ secrets.STORE_LOGIN }}
     with:
       runs-on: '["ubuntu-latest", ["self-hosted", "linux", "ARM64", "large", "noble"]]'
-      lxc-image: "ubuntu:20.04"
+      lxd-image: "ubuntu:20.04"
       snapcraft-source-subdir: "."
       git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-test-script: |
