@@ -22,7 +22,6 @@ jobs:
       snapstore-login: ${{ secrets.STORE_LOGIN }}
     with:
       runs-on: '["ubuntu-latest", ["self-hosted", "linux", "ARM64", "medium", "noble"]]'
-      lxd-image: 'ubuntu:20.04'
       snapcraft-source-subdir: "turtlebot3c-bringup-snap"
       git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snapcraft-enable-experimental-extensions: true
