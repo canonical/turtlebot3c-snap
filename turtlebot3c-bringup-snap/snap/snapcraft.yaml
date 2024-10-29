@@ -46,7 +46,7 @@ hooks:
 parts:
   workspace:
     plugin: catkin
-    source: https://github.com/ubuntu-robotics/turtlebot3c.git
+    source: https://github.com/canonical/turtlebot3c.git
     source-branch: noetic-devel
     source-subdir: turtlebot3c_bringup
 
