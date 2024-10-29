@@ -18,7 +18,7 @@ jobs:
   snap:
     uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
     secrets:
-      store-login: ${{ secrets.STORE_LOGIN }}
+      snapstore-login: ${{ secrets.STORE_LOGIN }}
     with:
       runs-on: '["ubuntu-latest", ["self-hosted", "linux", "ARM64", "large", "noble"]]'
       lxc-image: "ubuntu:20.04"
