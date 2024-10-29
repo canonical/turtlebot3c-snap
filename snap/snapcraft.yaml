@@ -2,7 +2,8 @@ name: turtlebot3c
 version: git
 license: GPL-3.0
 contact: ubuntu-robotics-community@canonical.com
-website: https://github.com/canonical/turtlebot3c-snap
+website: https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
+source-code: https://github.com/canonical/turtlebot3c-snap
 issues: https://github.com/canonical/turtlebot3c-snap/issues
 summary: TurtleBot3c core snap
 description: |
