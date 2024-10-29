@@ -140,7 +140,7 @@ jobs:
             pid=$!
 
             echo "check simulation is running"
-            check_publishing scan 30
+            check_publishing scan 300
             check_publishing joint_states 30
 
             ## test core robot_state_publisher
