@@ -43,7 +43,7 @@ parts:
 
       # set version and grade from code
       git config --global --add safe.directory '*'
-      version="$(cd turtlebot3 && git describe --always --tags| sed -e 's/^v//;s/-/+git/;y/-/./')"
+      version="$(git describe --always --tags| sed -e 's/^v//;s/-/+git/;y/-/./')"
       [ -n "$(echo $version | grep "+git")" ] && grade=devel || grade=stable
       craftctl set version="${version}"
       craftctl default
