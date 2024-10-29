@@ -1,6 +1,9 @@
 name: turtlebot3c-bringup
-version: '0.1'
+version: git
 license: GPL-3.0
+website: https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
+source-code: https://github.com/canonical/turtlebot3c-snap/tree/feature/multi-snap-humble
+issues: https://github.com/canonical/turtlebot3c-snap/issues
 summary: TurtleBot3c core snap
 description: |
   This snap automatically spawn a roscore and the core components for the
