@@ -2,6 +2,8 @@ name: turtlebot3c-bringup
 adopt-info: workspace
 contact: ubuntu-robotics-community@canonical.com
 license: GPL-3.0
+website: https://github.com/canonical/turtlebot3c-snap/tree/feature/multi-snap
+issues: https://github.com/canonical/turtlebot3c-snap/issues
 summary: TurtleBot3c core snap
 description: |
   This snap automatically spawn a roscore and the core components for the
