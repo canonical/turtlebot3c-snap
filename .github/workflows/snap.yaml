@@ -161,7 +161,7 @@ jobs:
             while true; do
               echo "check map exists.."
               error_code=$(sudo bash -c 'cd /root/snap/turtlebot3c-nav/common/map/ && ls | grep -q ".yaml"'; echo $?)
-              if [ $? -eq 0 ]; then
+              if [ $error_code -eq 0 ]; then
                 echo "map found - starting navigation"
                 break
               fi

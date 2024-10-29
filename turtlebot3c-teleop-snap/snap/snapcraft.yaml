@@ -1,5 +1,6 @@
 name: turtlebot3c-teleop
 adopt-info: workspace
+contact: ubuntu-robotics-community@canonical.com
 license: GPL-3.0
 summary: TurtleBot3c teleop snap
 description: |
