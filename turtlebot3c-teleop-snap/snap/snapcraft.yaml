@@ -1,5 +1,6 @@
 name: turtlebot3c-teleop
-version: '0.1'
+version: git
+contact: ubuntu-robotics-community@canonical.com
 license: GPL-3.0
 summary: Turtlebot3c teleop snap
 description: |

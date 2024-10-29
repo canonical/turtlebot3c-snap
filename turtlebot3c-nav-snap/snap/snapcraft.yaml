@@ -1,5 +1,6 @@
 name: turtlebot3c-nav
-version: '0.1'
+version: git
+contact: ubuntu-robotics-community@canonical.com
 license: GPL-3.0
 summary: Turtlebot3c mapping and navigation snap
 description: |
