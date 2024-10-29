@@ -1,4 +1,5 @@
-name: snap
+name: test turtlebot multi snap
+
 on:
   push:
     branches:
@@ -15,15 +16,12 @@ on:
         default: ''
 
 jobs:
-  snap:
-    uses: ubuntu-robotics/snap_workflows/.github/workflows/snap.yaml@main
+  snaps:
+    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
     secrets:
-      store-login: ${{ secrets.STORE_LOGIN }}
+      snapstore-login: ${{ secrets.STORE_LOGIN }}
     with:
-      ubuntu-image: ubuntu-24.04
-      branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
-      snapcraft-build-path: ./turtlebot3c-bringup-snap
-      enable-experimental-extensions-env: true
-      snap-name: turtlebot3c-bringup
-      publish: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
-      publish-track: jazzy
+      runs-on: '["ubuntu-latest", ["self-hosted", "linux", "ARM64", "medium", "noble"]]'
+      snapcraft-source-subdir: "turtlebot3c-bringup-snap"
+      git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
+      snapcraft-enable-experimental-extensions: true
