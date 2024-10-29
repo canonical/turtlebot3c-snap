@@ -2,7 +2,8 @@ name: turtlebot3c-nav
 adopt-info: workspace
 contact: ubuntu-robotics-community@canonical.com
 license: GPL-3.0
-website: https://github.com/canonical/turtlebot3c-snap/tree/feature/multi-snap
+website: https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
+source-code: https://github.com/canonical/turtlebot3c-snap/tree/feature/multi-snap
 issues: https://github.com/canonical/turtlebot3c-snap/issues
 summary: TurtleBot3c mapping and navigation snap
 description: |
@@ -47,7 +48,7 @@ parts:
       git config --global --add safe.directory '*'
       version="$(git describe --always --tags| sed -e 's/^v//;s/-/+git/;y/-/./')"
       [ -n "$(echo $version | grep "+git")" ] && grade=devel || grade=stable
-      snapcraftctl set-version="${version}"
+      snapcraftctl set-version "${version}"
 
   # copy local scripts to the snap usr/bin
   local-files:
