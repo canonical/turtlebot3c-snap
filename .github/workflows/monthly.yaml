@@ -13,6 +13,14 @@ jobs:
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap
     with:
       branch-name: feature/multi-snap
+  multi-snap-humble:
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap-humble
+    with:
+      branch-name: feature/multi-snap-humble
+  multi-snap-jazzy:
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap-jazzy
+    with:
+      branch-name: feature/multi-snap-jazzy
   part2-answer:
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@developer-guide-part2-answer
     with:
