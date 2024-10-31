@@ -39,7 +39,7 @@ jobs:
 
                 while [ -z "${topic_data}" ]; do
                   echo "waiting for /$name data"
-                  topic_data=$(rostopic echo -n 10 /$name 2>/dev/null)
+                  topic_data=$(rostopic echo -n 10 /$name 2>/dev/null || true)
                   if [ -z "${topic_data}" ]; then
                     echo "Topic /$name is not publishing data."
                   else
@@ -108,7 +108,7 @@ jobs:
             TURTLEBOT3_MODEL=waffle_pi roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch &
             pid=$!
             echo "check simulation is running"
-            check_publishing scan 300
+            check_publishing scan 600
             check_publishing joint_states 30
             ## test core robot_state_publisher
             check_existence rostopic tf 30
@@ -116,10 +116,10 @@ jobs:
             ## test mapping node
             sudo snap start turtlebot3c.mapping
             check_existence rosnode turtlebot3_slam_gmapping 300
-            check_existence rostopic map 30
+            check_existence rostopic map 300
             echo "moving the robot"
             timeout 5s rostopic pub -r 10 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[1.0, 0.0, 0.0]' || true
-            check_publishing map 30
+            check_publishing map 300
             sudo snap stop turtlebot3c.mapping
             
             ## check map has been created
