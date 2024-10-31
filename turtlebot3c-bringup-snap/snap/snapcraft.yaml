@@ -1,6 +1,9 @@
 name: turtlebot3c-bringup
-version: '0.1'
+adopt-info: turtlebot3c-bringup
 license: GPL-3.0
+website: https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
+source-code: https://github.com/canonical/turtlebot3c-snap/tree/feature/multi-snap-jazzy
+issues: https://github.com/canonical/turtlebot3c-snap/issues
 summary: TurtleBot3c core snap
 description: |
   This snap automatically spawn a roscore and the core components for the
@@ -37,6 +40,12 @@ parts:
       # since those are not yet available in jazzy.
       git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
       cd turtlebot3 && git sparse-checkout set turtlebot3_bringup/ turtlebot3_description/ turtlebot3_node/
+
+      # set version and grade from code
+      git config --global --add safe.directory '*'
+      version="$(git describe --always --tags| sed -e 's/^v//;s/-/+git/;y/-/./')"
+      [ -n "$(echo $version | grep "+git")" ] && grade=devel || grade=stable
+      craftctl set version="${version}"
       craftctl default
     build-packages:
       - git
