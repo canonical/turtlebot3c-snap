@@ -25,3 +25,5 @@ jobs:
       snapcraft-source-subdir: "turtlebot3c-bringup-snap"
       git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snapcraft-enable-experimental-extensions: true
+      snap-track: jazzy
+
