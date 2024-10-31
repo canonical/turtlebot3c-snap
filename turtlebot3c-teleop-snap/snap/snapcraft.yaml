@@ -1,13 +1,16 @@
 name: turtlebot3c-teleop
-version: git
+adopt-info: workspace
 contact: ubuntu-robotics-community@canonical.com
 license: GPL-3.0
-summary: Turtlebot3c teleop snap
+website: https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
+source-code: https://github.com/canonical/turtlebot3c-snap/tree/feature/multi-snap
+issues: https://github.com/canonical/turtlebot3c-snap/issues
+summary: TurtleBot3c teleop snap
 description: |
   This snap automatically spawn a roscore and the core components for the
-  Turtlebot3.
+  TurtleBot3.
 
-  This snap is meant to run on the Turtlebot3 robot or with the simulation
+  This snap is meant to run on the TurtleBot3 robot or with the simulation
 
   By default the snap runs on the robot.
   To switch to the simulation
@@ -19,7 +22,7 @@ description: |
 
     snap set turtlebot3c-teleop lds-model=LDS-02
 
-  By default the snap runs the waffle_pi Turtlebot3 model.
+  By default the snap runs the waffle_pi TurtleBot3 model.
   To select another robot model (waffle or burger)
 
     snap set turtlebot3c-teleop turtlebot3-model=burger
@@ -39,6 +42,13 @@ parts:
     source: https://github.com/canonical/turtlebot3c.git
     source-branch: noetic-devel
     source-subdir: turtlebot3c_teleop
+    override-pull: |
+      snapcraftctl pull
+      # set version and grade from code
+      git config --global --add safe.directory '*'
+      version="$(git describe --always --tags| sed -e 's/^v//;s/-/+git/;y/-/./')"
+      [ -n "$(echo $version | grep "+git")" ] && grade=devel || grade=stable
+      snapcraftctl set-version "${version}"
 
   # copy local scripts to the snap usr/bin
   local-files:
