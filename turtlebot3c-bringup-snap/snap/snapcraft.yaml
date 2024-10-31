@@ -1,6 +1,9 @@
 name: turtlebot3c-bringup
-version: '0.1'
+adopt-info: turtlebot3c-bringup
 license: GPL-3.0
+website: https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
+source-code: https://github.com/canonical/turtlebot3c-snap/tree/feature/multi-snap-humble
+issues: https://github.com/canonical/turtlebot3c-snap/issues
 summary: TurtleBot3c core snap
 description: |
   This snap automatically spawn a roscore and the core components for the
@@ -33,6 +36,13 @@ parts:
     source: https://github.com/ROBOTIS-GIT/turtlebot3.git
     source-branch: humble-devel
     source-subdir: turtlebot3_bringup
+    override-pull: |
+      craftctl default
+      # set version and grade from code
+      git config --global --add safe.directory '*'
+      version="$(git describe --always --tags| sed -e 's/^v//;s/-/+git/;y/-/./')"
+      [ -n "$(echo $version | grep "+git")" ] && grade=devel || grade=stable
+      craftctl set version="${version}"
 
   # copy local scripts to the snap usr/bin
   local-files:
