@@ -149,4 +149,3 @@ jobs:
 
             kill $pid
             sudo snap stop turtlebot3c
-            
