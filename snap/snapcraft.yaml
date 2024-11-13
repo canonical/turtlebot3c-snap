@@ -40,7 +40,7 @@ parts:
   workspace:
     plugin: catkin
     source: .
-    build-packages: [python3-vcstool]
+    build-packages: [python3-vcstool, git]
     stage-packages:
       - ros-noetic-rosbash # necessary if we need rosrun
       - ros-noetic-roslaunch # necessary if we need roslaunch
