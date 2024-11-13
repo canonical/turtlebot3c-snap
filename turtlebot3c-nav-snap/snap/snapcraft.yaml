@@ -1,5 +1,5 @@
 name: turtlebot3c-nav
-adopt-info: workspace
+version: '0.1'
 contact: ubuntu-robotics-community@canonical.com
 license: GPL-3.0
 website: https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
@@ -42,13 +42,6 @@ parts:
     source: https://github.com/canonical/turtlebot3c.git
     source-branch: noetic-devel
     source-subdir: turtlebot3c_2dnav
-    override-pull: |
-      snapcraftctl pull
-      # set version and grade from code
-      git config --global --add safe.directory '*'
-      version="$(git describe --always --tags| sed -e 's/^v//;s/-/+git/;y/-/./')"
-      [ -n "$(echo $version | grep "+git")" ] && grade=devel || grade=stable
-      snapcraftctl set-version "${version}"
 
   # copy local scripts to the snap usr/bin
   local-files:
