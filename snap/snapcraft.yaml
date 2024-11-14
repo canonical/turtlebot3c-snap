@@ -1,5 +1,5 @@
 name: turtlebot3c
-version: git
+version: '0.1'
 license: GPL-3.0
 contact: ubuntu-robotics-community@canonical.com
 website: https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
@@ -40,7 +40,7 @@ parts:
   workspace:
     plugin: catkin
     source: .
-    build-packages: [python3-vcstool]
+    build-packages: [python3-vcstool, git]
     stage-packages:
       - ros-noetic-rosbash # necessary if we need rosrun
       - ros-noetic-roslaunch # necessary if we need roslaunch
