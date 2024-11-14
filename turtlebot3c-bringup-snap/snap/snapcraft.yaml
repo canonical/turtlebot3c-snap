@@ -1,5 +1,5 @@
 name: turtlebot3c-bringup
-version: '0.1'
+version: '0.1.0'
 contact: ubuntu-robotics-community@canonical.com
 license: GPL-3.0
 website: https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/
