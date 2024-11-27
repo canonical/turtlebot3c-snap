@@ -13,17 +13,6 @@ case "$SIMULATION" in
 		;;
 esac
 
-LDS_MODEL="$(snapctl get lds-model)"
-case "$LDS_MODEL" in
-	"LDS-01") ;;
-	"LDS-02") ;;
-	*)
-		>&2 echo "'$LDS_MODEL' is not a supported value for lds_model." \
-      "Possible values are LDS-01 and LDS-02"
-		return 1
-		;;
-esac
-
 TURTLEBOT3_MODEL="$(snapctl get turtlebot3-model)"
 case "$TURTLEBOT3_MODEL" in
 	"burger") ;;
