@@ -1,0 +1,16 @@
+name: Monthly-1 # Necessary since there is a limit of 20 reusable workflows
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  part2-answer:
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@developer-guide-part2-answer
+    with:
+      branch-name: developer-guide-part2-answer
+  debugging-tutorial:
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@debugging-tutorial
+    with:
+      branch-name: debugging-tutorial
+
