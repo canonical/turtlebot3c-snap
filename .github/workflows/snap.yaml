@@ -32,8 +32,9 @@ jobs:
                       exit 1
                     fi
 
-                    MAP_FOLDER=/root/snap/turtlebot3c/common/map/
+                    MAP_FOLDER=/root/snap/turtlebot3c/common/map
 
+                    sudo mkdir $MAP_FOLDER
                     sudo touch $MAP_FOLDER/dummy_map.yaml
                     sudo touch $MAP_FOLDER/dummy_map.pgm
 
