@@ -19,7 +19,7 @@ on:
 
 jobs:
   snaps:
-    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
+    uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@fix/unique_artifact_name
     secrets:
       snapstore-login: ${{ secrets.STORE_LOGIN }}
     with:
