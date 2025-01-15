@@ -6,19 +6,19 @@ on:
 
 jobs:
   noetic-devel-snap:
-    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@noetic-devel
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@fix/monthly
     with:
-      branch-name: "noetic-devel"
+      branch-name: "fix/monthly"
   multi-snap:
-    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap-unique-name
     with:
-      branch-name: feature/multi-snap
+      branch-name: feature/multi-snap-unique-name
   multi-snap-humble:
-    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap-humble
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap-humble-unique-name
     with:
-      branch-name: feature/multi-snap-humble
+      branch-name: feature/multi-snap-humble-unique-name
   multi-snap-jazzy:
-    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap-jazzy
+    uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap-jazzy-unique-name
     with:
-      branch-name: feature/multi-snap-jazzy
+      branch-name: feature/multi-snap-jazzy-unique-name
 
