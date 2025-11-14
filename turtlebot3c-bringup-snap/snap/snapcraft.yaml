@@ -33,17 +33,8 @@ platforms:
 parts:
   turtlebot3c-bringup:
     plugin: colcon
-    source: .
-    override-pull: |
-      git init
-      # Humble-devel compiles on jazzy. Using source packages to build bringup package
-      # since those are not yet available in jazzy.
-      git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
-      cd turtlebot3 && git sparse-checkout set turtlebot3_bringup/ turtlebot3_description/ turtlebot3_node/
-
-      craftctl default
-    build-packages:
-      - git
+    source: https://github.com/ROBOTIS-GIT/turtlebot3.git
+    source-branch: jazzy
 
   # copy local scripts to the snap usr/bin
   local-files:
