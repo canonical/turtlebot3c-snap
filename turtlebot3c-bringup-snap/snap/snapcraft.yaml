@@ -34,7 +34,7 @@ parts:
   turtlebot3c-bringup:
     plugin: colcon
     source: https://github.com/ROBOTIS-GIT/turtlebot3.git
-    source-branch: humble-devel
+    source-branch: humble
     source-subdir: turtlebot3_bringup
 
   # copy local scripts to the snap usr/bin
