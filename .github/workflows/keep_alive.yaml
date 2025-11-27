@@ -8,7 +8,7 @@ jobs:
   keep_alive:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           # we don't want the dummy commit to appear on a branch we actively use
           # the dummy commit are going to be applied to the _keepalive branch
