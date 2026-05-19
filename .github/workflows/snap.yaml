@@ -22,7 +22,7 @@ jobs:
     secrets:
       snapstore-login: ${{ secrets.STORE_LOGIN }}
     with:
-      runs-on: '["ubuntu-latest", "ubuntu-latest-arm"]'
+      runs-on: '["ubuntu-latest", "ubuntu-24.04-arm"]'
       lxd-image: "ubuntu:20.04"
       snapcraft-source-subdir: "."
       git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
