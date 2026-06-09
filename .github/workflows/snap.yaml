@@ -18,10 +18,9 @@ jobs:
   snap:
     uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
     with:
-      branch-name: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
-      snap-name: turtlebot3c
+      git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-install-args: --devmode
-      test-script: |
+      snap-test-script: |
                     #!/bin/bash
 
                     sudo snap services turtlebot3c | grep -E "map-cleaner|timer-activated"
