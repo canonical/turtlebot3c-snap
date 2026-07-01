@@ -21,4 +21,5 @@ jobs:
       runs-on: '["ubuntu-latest", ["self-hosted", "linux", "ARM64", "large", "noble"]]'
       lxd-image: "ubuntu:20.04"
       snapcraft-source-subdir: "."
+      snapcraft-channel: "8.x/stable"
       git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
