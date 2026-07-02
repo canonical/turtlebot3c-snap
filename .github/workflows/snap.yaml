@@ -37,7 +37,7 @@ jobs:
     secrets:
       snapstore-login: ${{ secrets.STORE_LOGIN }}
     with:
-      runs-on: '["ubuntu-latest", ["self-hosted", "linux", "ARM64", "medium", "noble"]]'
+      runs-on: '["ubuntu-latest", "ubuntu-24.04-arm"]'
       lxd-image: 'ubuntu:20.04'
       snapcraft-source-subdir: "${{ needs.collect_snap_names.outputs.snap-names }}"
       snapcraft-channel: "8.x/stable"
