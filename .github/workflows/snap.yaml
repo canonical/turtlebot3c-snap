@@ -19,6 +19,7 @@ jobs:
     uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
     with:
       git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
+      snapcraft-channel: "8.x/stable"
       snap-install-args: --devmode
       snap-test-script: |
                     #!/bin/bash
