@@ -40,6 +40,7 @@ jobs:
       runs-on: '["ubuntu-latest", ["self-hosted", "linux", "ARM64", "medium", "noble"]]'
       lxd-image: 'ubuntu:20.04'
       snapcraft-source-subdir: "${{ needs.collect_snap_names.outputs.snap-names }}"
+      snapcraft-channel: "8.x/stable"
       git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snapcraft-enable-experimental-extensions: true
       snap-test-script: |
