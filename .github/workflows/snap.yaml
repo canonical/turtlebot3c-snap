@@ -25,6 +25,7 @@ jobs:
       runs-on: '["ubuntu-latest", "ubuntu-24.04-arm"]'
       lxd-image: "ubuntu:20.04"
       snapcraft-source-subdir: "."
+      snapcraft-channel: "8.x/stable"
       git-ref: ${{ inputs.branch-name == '' && github.ref || inputs.branch-name }}
       snap-test-script: |
             #!/bin/bash
