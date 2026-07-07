@@ -18,7 +18,7 @@ jobs:
   snap:
     uses: canonical/robotics-actions-workflows/.github/workflows/snap.yaml@main
     with:
-      runs-on: '["ubuntu-latest", ["self-hosted", "linux", "ARM64", "large", "noble"]]'
+      runs-on: '["ubuntu-latest", "ubuntu-24.04-arm"]'
       lxd-image: "ubuntu:20.04"
       snapcraft-source-subdir: "."
       snapcraft-channel: "8.x/stable"
