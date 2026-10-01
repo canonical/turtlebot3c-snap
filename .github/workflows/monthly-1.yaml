@@ -6,10 +6,16 @@ on:
 
 jobs:
   part2-answer:
+    permissions:
+      contents: read
+      actions: write
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@developer-guide-part2-answer
     with:
       branch-name: developer-guide-part2-answer
   debugging-tutorial:
+    permissions:
+      contents: read
+      actions: write
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@debugging-tutorial
     with:
       branch-name: debugging-tutorial
