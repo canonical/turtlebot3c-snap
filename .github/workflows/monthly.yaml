@@ -6,18 +6,30 @@ on:
 
 jobs:
   noetic-devel-snap:
+    permissions:
+      contents: read
+      actions: write
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@noetic-devel
     with:
       branch-name: "noetic-devel"
   multi-snap:
+    permissions:
+      contents: read
+      actions: write
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap
     with:
       branch-name: feature/multi-snap
   multi-snap-humble:
+    permissions:
+      contents: read
+      actions: write
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap-humble
     with:
       branch-name: feature/multi-snap-humble
   multi-snap-jazzy:
+    permissions:
+      contents: read
+      actions: write
     uses: canonical/turtlebot3c-snap/.github/workflows/snap.yaml@feature/multi-snap-jazzy
     with:
       branch-name: feature/multi-snap-jazzy
